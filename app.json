@@ -3,6 +3,14 @@
     "name": "final-project-mobile",
     "slug": "final-project-mobile",
     "version": "1.0.0",
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
+        }
+      ]
+    ],
     "orientation": "portrait",
     "icon": "./assets/smile-logo-bg-blue-round.png",
     "userInterfaceStyle": "light",

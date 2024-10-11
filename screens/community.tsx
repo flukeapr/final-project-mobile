@@ -73,7 +73,7 @@ const CommunityScreen = ({navigation}) => {
 
   useEffect(() => {
     getPost();
-  }, []);
+  }, [navigation]);
 
   const toggleComments = (postId) => {
     const post = posts.find(post => post.postId === postId);

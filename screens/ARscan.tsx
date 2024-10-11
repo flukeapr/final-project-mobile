@@ -1,21 +1,142 @@
-// test.tsx
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Camera, CameraType } from "expo-camera";
+import { useState } from "react";
+import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import * as FaceDetector from "expo-face-detector";
 
-const ARScreen = () => {
+export default function ARScreen() {
+  const [type, setType] = useState(CameraType.front);
+  const [permission, requestPermission] = Camera.useCameraPermissions();
+  const [faceBounds, setFaceBounds] = useState(null);
+  const [expression, setExpression] = useState("");
+
+  if (!permission) {
+    return <View />;
+  }
+  if (!permission.granted) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ textAlign: "center" }}>
+          We need your permission to show the camera
+        </Text>
+        <Button onPress={requestPermission} title="grant permission" />
+      </View>
+    );
+  }
+
+  function toggleCameraType() {
+    setType((current) =>
+      current === CameraType.front ? CameraType.back : CameraType.front
+    );
+  }
+
+  const handleFacesDetected = ({ faces }) => {
+    if (faces.length > 0) {
+      const { bounds, smilingProbability } = faces[0];
+      setFaceBounds(bounds);
+      
+    
+     if (smilingProbability > 0.3) { // Adjust this threshold as needed
+      
+        setExpression("Happy");
+      } else {
+        
+        setExpression("Sad");
+      }
+    } else {
+      setFaceBounds(null);
+      setExpression(""); // Reset expression if no face detected
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Text>ARScreen</Text>
+      <Camera
+        style={styles.camera}
+        type={type}
+        onFacesDetected={handleFacesDetected}
+        faceDetectorSettings={{
+          mode: FaceDetector.FaceDetectorMode.fast,
+          detectLandmarks: FaceDetector.FaceDetectorLandmarks.none,
+          runClassifications: FaceDetector.FaceDetectorClassifications.all,
+          minDetectionInterval: 100,
+          tracking: true,
+        }}
+      >
+       {faceBounds && (
+        <View
+          style={[
+            styles.faceBorder,
+            {
+              left: faceBounds.origin.x,
+              top: faceBounds.origin.y,
+              width: faceBounds.size.width,
+              height: faceBounds.size.height,
+            },
+          ]}
+        />
+      )}
+      {faceBounds && (
+        <Text
+          style={[
+            styles.expressionText,
+            {
+              position: 'absolute',
+              left: faceBounds.origin.x,
+              top: faceBounds.origin.y + faceBounds.size.height + 10, // Adjusting position below the face border
+            },
+          ]}
+        >
+          {expression}
+        </Text>
+      )}
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
+            <Text style={styles.text}>Flip Camera</Text>
+          </TouchableOpacity>
+        </View>
+      </Camera>
+      
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center", 
   },
+  camera: {
+    flex: 1,
+    width: "100%", 
+  },
+  buttonContainer: {
+    flex: 1,
+    flexDirection: "row",
+    backgroundColor: "transparent",
+    margin: 64,
+  },
+  button: {
+    flex: 1,
+    alignSelf: "flex-end",
+    alignItems: "center",
+  },
+  text: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "white",
+  },
+  faceBorder: {
+    position: "absolute",
+    borderColor: "green",
+    borderWidth: 2,
+    borderRadius: 10,
+  },
+  expressionText: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "white",
+    marginTop: 20,
+    textAlign: "center",
+  }
 });
-
-export default ARScreen;

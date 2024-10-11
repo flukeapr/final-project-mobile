@@ -1,2 +1,2 @@
 global.session = null
-global.URL = "http://10.0.2.2:3000"
+global.URL = "https://hip-walls-eat.loca.lt"
