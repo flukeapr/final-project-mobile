@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingVertical: 30,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#F0F4F8',
   },
   headerContainer: {
     alignItems: 'center',
@@ -259,7 +259,15 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   questionContainer: {
-    marginBottom: 15,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    padding: 16,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 3,
   },
   questionText: {
     fontSize: 18,

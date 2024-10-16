@@ -1,3 +1,4 @@
+import { Icon } from "@rneui/base";
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -7,6 +8,8 @@ import {
   ActivityIndicator,
   Alert,
   Dimensions,
+  Modal,
+  TouchableOpacity
 } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 
@@ -30,10 +33,13 @@ interface QuizResult {
   test2: QuizDetails | null;
   test3: QuizDetails | null;
 }
+const { width, height } = Dimensions.get("window");
 
-const ResultScreen = () => {
+const ResultScreen = ({navigation}) => {
   const [quizResults, setQuizResults] = useState([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [visibleModal ,setVisibleModal] = useState<boolean>(false);
+  const [selectQuiz , setSelectQuiz] = useState([]);
 
   const preRq3: QuizDetails = quizResults.find(
     (result) => result.quizId === 8 && result.quizType === "PRE"
@@ -49,9 +55,17 @@ const ResultScreen = () => {
     (result) => result.quizId === 7 && result.quizType === "POST"
   );
 
+  const preRq29: QuizDetails = quizResults.find(
+    (result) => result.quizId === 6 && result.quizType === "PRE"
+  );
+
+  const postRq29: QuizDetails = quizResults.find(
+    (result) => result.quizId === 6 && result.quizType === "POST"
+  );
+
   useEffect(() => {
     fetchQuizResults();
-  }, []);
+  }, [navigation]);
 
   const fetchQuizResults = async () => {
     try {
@@ -84,11 +98,15 @@ const ResultScreen = () => {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Loading results...</Text>
+        <Text>กำลังโหลด...</Text>
       </View>
     );
   }
 
+  const selectedQuiz = (quiz1 : QuizDetails,quiz2 : QuizDetails)=>{
+    setVisibleModal(true);
+    setSelectQuiz([quiz1,quiz2]);
+  }
   
 
   const preRq20data = [ 
@@ -116,6 +134,8 @@ const postRq20data = [
 
 
   return (
+    <>
+   
     <ScrollView style={styles.container}>
       {/* Test 1 Results */}
       <View style={styles.quizContainer}>
@@ -124,18 +144,21 @@ const postRq20data = [
           <View style={styles.childContainer}>
             <Text>ก่อน</Text>
             <View style={styles.chartPie}>
-              <Text style={styles.chartPieText}>{preRq3.total || 0}</Text>
+              <Text style={styles.chartPieText}>{preRq3 ? preRq3.total || 0 : 0}</Text>
             </View>
-            <Text>{preRq3.risk ? preRq3.risk : "ไม่มีข้อมูล"} </Text>
+            <Text>{preRq3 ? preRq3.risk ? preRq3.risk : "ไม่มีข้อมูล" : 'ยังไม่ทำแบบปรเมิน'} </Text>
           </View>
           <View style={styles.childContainer}>
             <Text>หลัง</Text>
             <View style={styles.chartPie}>
-              <Text style={styles.chartPieText}>{postRq3.total || 0}</Text>
+              <Text style={styles.chartPieText}>{postRq3 ? postRq3.total || 0 : 0}</Text>
             </View>
-            <Text>{postRq3.risk ? postRq3.risk : "ไม่มีข้อมูล"} </Text>
+            <Text >{postRq3 ? postRq3.risk ? postRq3.risk : "ไม่มีข้อมูล" : 'ยังไม่ทำแบบปรเมิน'} </Text>
           </View>
         </View>
+        <TouchableOpacity onPress={()=> selectedQuiz(preRq3, postRq3)}>
+        <Text style={{textAlign: 'center', marginVertical :10}}>ดูผลลัพธ์แบบประเมินที่ทำ</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Test 2 Results */}
@@ -150,11 +173,11 @@ const postRq20data = [
                 noOfSections={3}
                 barBorderRadius={4}
                 frontColor="lightgray"
-                data={preRq20data}
+                data={preRq20data ? postRq20data : [{value: 0, label: 'ไม่มีข้อมูล'}]}
                 yAxisThickness={0}
                 xAxisThickness={0}
             />
-            <Text>{preRq20.risk} </Text>
+            <Text  style={styles.risk}>{preRq20 ? preRq20.risk ? preRq20.risk : "ไม่มีข้อมูล" : 'ยังไม่ทำแบบปรเมิน'} </Text>
           </View>
           <View style={styles.childContainer}>
             <Text>หลัง</Text>
@@ -165,36 +188,133 @@ const postRq20data = [
                 noOfSections={3}
                 barBorderRadius={4}
                 frontColor="lightgray"
-                data={postRq20data}
+                data={postRq20data ? postRq20data : [{value: 0, label: 'ไม่มีข้อมูล'}]}
                 yAxisThickness={0}
                 xAxisThickness={0}
             />
-            <Text>{postRq20.risk} </Text>
+            <Text style={styles.risk}>{postRq20 ? postRq20.risk ? postRq20.risk : "ไม่มีข้อมูล" : 'ยังไม่ทำแบบปรเมิน'} </Text>
           </View>
         </View>
+        <TouchableOpacity onPress={()=> selectedQuiz(preRq20, postRq20)}>
+        <Text style={{textAlign: 'center', marginVertical :10}}>ดูผลลัพธ์แบบประเมินที่ทำ</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Test 3 Results */}
       <View style={styles.quizContainer}>
         <Text style={styles.quizHeader}>แบบประเมิน  MHL 29 ข้อ</Text>
-        <View style={styles.chartContainer}>
+        <View style={{display: 'flex', flexDirection: 'column'}}>
           <View style={styles.childContainer}>
             <Text>ก่อน</Text>
             <View style={styles.chartPie}>
-              <Text style={styles.chartPieText}>{preRq3.total || 0}</Text>
+              <Text style={styles.chartPieText}>{preRq29 ? preRq29.total || 0 :0}</Text>
             </View>
-            <Text>{preRq3.risk ? preRq3.risk : "ไม่มีข้อมูล"} </Text>
+            <Text numberOfLines={2} >{preRq29 ? preRq29.risk ? preRq29.risk : "ไม่มีข้อมูล" : 'ยังไม่ทำแบบปรเมิน'} </Text>
           </View>
           <View style={styles.childContainer}>
             <Text>หลัง</Text>
             <View style={styles.chartPie}>
-              <Text style={styles.chartPieText}>{postRq3.total || 0}</Text>
+              <Text style={styles.chartPieText}>{postRq29 ? postRq29.total || 0 : 0}</Text>
             </View>
-            <Text>{postRq3.risk ? postRq3.risk : "ไม่มีข้อมูล"} </Text>
+            <Text >{postRq29 ? postRq29.risk ? postRq29.risk : "ไม่มีข้อมูล" : 'ยังไม่ทำแบบปรเมิน'} </Text>
           </View>
         </View>
+        <TouchableOpacity onPress={()=> selectedQuiz(preRq29, postRq29)}>
+        <Text style={{textAlign: 'center', marginVertical :10}}>ดูผลลัพธ์แบบประเมินที่ทำ</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
+    <Modal
+    animationType="slide"
+    visible={visibleModal}
+    onRequestClose={() => {
+      setVisibleModal(false);
+    }}
+    transparent={true}
+    
+    >
+      <View style={styles.modal} >
+        <View style={styles.modalView}>
+          <Icon name="close" size={24} color="black" onPress={() => setVisibleModal(false)} style={{alignSelf: 'flex-end'}} />  
+            <ScrollView>
+
+           
+            <View >
+            {selectQuiz[0]?.answers?.length > 0 &&  selectQuiz[0]?.question.length > 0 &&(
+        <ScrollView>
+            <Text style={styles.quizHeader}>{selectQuiz[0]?.name}</Text>
+            <Text style={{marginVertical: 10 ,fontSize: 18}}>แบบประเมินก่อนกิจกรรม</Text>
+            {selectQuiz[0].question.map((question, qIndex) => (
+                <View key={qIndex} style={{marginVertical: 10}}>
+                <Text style={styles.question}>
+                    {question}
+                </Text>
+                
+
+                <ScrollView horizontal  style={{flexDirection:'row',display:'flex'}}>
+                {[...Array(selectQuiz[0]?.quizId === 6 || selectQuiz[0]?.quizId === 7 ? 5 : 10)].map((_, oIndex) => {
+                    const isSelected =  selectQuiz[0].answers[qIndex] === oIndex +1
+                    return (
+                        
+                      <View key={oIndex} style={[styles.scoreButton , {backgroundColor: isSelected ? "#3498DB" : "white"  }]}>
+                        <Text>{oIndex +1}</Text>
+                        </View>                         
+                  
+                    )
+                    
+                   
+                    })}
+                </ScrollView> 
+                 </View>
+            ))}
+            
+        </ScrollView>
+      )}
+            </View>
+            <View
+  style={{
+    borderBottomColor: 'black',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    marginVertical:20
+  }}
+/>
+            
+            <View >
+            {selectQuiz[1]?.answers?.length > 0 &&  selectQuiz[1]?.question.length > 0 &&(
+        <ScrollView>
+            <Text style={{marginVertical: 10,fontSize: 18}}>แบบประเมินหลังกิจกรรม</Text>
+            {selectQuiz[1].question.map((question, qIndex) => (
+                <View key={qIndex}>
+                <Text style={styles.question}>
+                    {question}
+                </Text>
+                
+
+                <ScrollView horizontal  style={{flexDirection:'row',display:'flex'}}>
+                {[...Array(selectQuiz[1]?.quizId === 6 || selectQuiz[1]?.quizId === 7 ? 5 : 10)].map((_, oIndex) => {
+                    const isSelected =  selectQuiz[1].answers[qIndex] === oIndex +1
+                    return (
+                        
+                      <View style={[styles.scoreButton , {backgroundColor: isSelected ? "#3498DB" : "white"  }]}>
+                        <Text>{oIndex +1}</Text>
+                        </View>                         
+                  
+                    )
+                    
+                   
+                    })}
+                </ScrollView> 
+                 </View>
+            ))}
+            
+        </ScrollView>
+      )}
+            </View>
+            </ScrollView>
+        </View>
+      </View>
+    </Modal>
+    </>
   );
 };
 
@@ -202,7 +322,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#f4f4f4",
+    backgroundColor: "#dceaf7",
   },
   quizContainer: {
     marginBottom: 30,
@@ -264,6 +384,38 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     margin: 10,
   },
+  modal:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  }, 
+  modalView: {
+    width: width * 1, // 85% of screen width
+    maxHeight: height * 0.9, // Limit modal height to 75% of screen height
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 20,
+  },
+  scoreButton: {
+    backgroundColor: '#ECF0F1',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginHorizontal: 5,
+    margin: 10,
+    borderColor: '#ccc',
+    borderWidth: 1,
+  },
+  question: {
+    fontSize:16,
+    marginBottom: 10,
+  },
+  risk:{
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginVertical: 10,
+  }
 });
 
 export default ResultScreen;

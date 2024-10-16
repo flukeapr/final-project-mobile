@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Button, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 
-const ProfileScreen = () => {
-  const navigation = useNavigation(); 
+
+const ProfileScreen = ({navigation}) => {
+ 
 
   const checkLogin = async () => {
     try {
@@ -80,7 +80,7 @@ const ProfileScreen = () => {
         <Text style={styles.profileEmail}>{global.session?.user?.email}</Text>
       </View>
 
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('HelpCenter')}>
+      <TouchableOpacity style={styles.button} onPress={() => {global.session?.user?.role == 1?  navigation.navigate('AdminListUsers') : navigation.navigate('HelpCenter') }}>
         <Text style={styles.buttonText}>ศูนย์การช่วยเหลือ</Text>
       </TouchableOpacity>
 

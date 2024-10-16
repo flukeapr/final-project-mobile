@@ -16,7 +16,7 @@ const AiScreen = () => {
       }])
       const genAI = new GoogleGenerativeAI("AIzaSyBUCVIse4IyIscgS-u5scN1Fzvjjrb3rgI");
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
-      const prompt = ` คุณเล่นบทเป็นหมอนะ คุณมีชื่อว่าน้อง Happy โดยผมเป็นคนที่มีสภาวะทางจิต คุณช่วยแนะนำให้ความรู้เกี่ยวกับเรื่องสุขภาพจิต ${input}`
+      const prompt = `คุณรับบทเป็นนักจิตวิทยาชื่อ "น้อง Happy" โดยผมเป็นผู้ที่กำลังเผชิญกับปัญหาทางสุขภาพจิต คุณสามารถให้คำแนะนำและความรู้เกี่ยวกับสุขภาพจิตในบริบทที่เกี่ยวข้องกับ ${input} ได้ไหมครับ เพื่อช่วยให้ผมเข้าใจและดูแลตัวเองได้ดีขึ้น`
       const result = await model.generateContent(prompt);
       const response = await result.response;
       const text =  response.text();

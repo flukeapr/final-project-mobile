@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert ,Image } from 'react-native';
 import "../global"
 
 const ForgotPasswordScreen = ({ navigation }) => {
@@ -35,6 +35,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Image source={require('../assets/images/MH2.png')} style={{width:300, height:300}} />
       <Text style={styles.title}>รีเซ็ตรหัสผ่าน</Text>
       <Text style={styles.subtitle}>กรุณากรอกอีเมลของคุณเพื่อรีเซ็ตรหัสผ่านของคุณ</Text>
       <TextInput

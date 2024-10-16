@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Linking, Alert ,SafeAreaView, StatusBar } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Linking, Alert ,SafeAreaView, StatusBar,Modal } from 'react-native';
 import { Button, Icon } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
+import { Accelerometer } from 'expo-sensors';
 
 const bannerData = [
   { uri: 'https://policywatch.thaipbs.or.th/_next/image?url=https%3A%2F%2Fmedia.policywatch.thaipbs.or.th%2Fwp-content%2Fuploads%2F2024%2F02%2FCover-THpeopleNoHappy-240219-0.jpg&w=1920&q=75', url: 'https://policywatch.thaipbs.or.th' },
@@ -16,9 +17,21 @@ const recommendedData = [
 
 ];
 
+const ImageShake =  [
+  '/images/fighting/Head_flow.png',
+  '/images/fighting/Head_think.png',
+]
+
+const {width , height} = Dimensions.get('window');
+
 const HomeScreen = ({navigation}) => {
   const scrollViewRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [data, setData] = useState(null);
+  const [isFetching, setIsFetching] = useState(false);
+  const [lastFetchTime, setLastFetchTime] = useState(0);
+  const [image , setImage] = useState('');
  
   const windowWidth = Dimensions.get('window').width;
 
@@ -48,8 +61,66 @@ const HomeScreen = ({navigation}) => {
   );
 
   const handleHeartPress = () => {
-    Alert.alert('กำลังใจ', 'คุณคือคนที่ยอดเยี่ยม! อย่ายอมแพ้!', [{ text: 'ขอบคุณ', onPress: () => console.log('OK Pressed') }]);
+    setModalVisible(true);
+
+    // Alert.alert('กำลังใจ', 'คุณคือคนที่ยอดเยี่ยม! อย่ายอมแพ้!', [{ text: 'ขอบคุณ', onPress: () => console.log('OK Pressed') }]);
   };
+
+  useEffect(() => {
+    
+    if(modalVisible){
+      Accelerometer.setUpdateInterval(100); 
+
+    // Logic ในการตรวจจับการเขย่า
+    const shakeThreshold = 1.2; 
+    const timeDelay = 10000; 
+    const handleMotion = (accelerometerData) => {
+      const { x, y, z } = accelerometerData;
+      const acceleration = Math.sqrt(x * x + y * y + z * z);
+
+      if (acceleration > shakeThreshold && !isFetching) {
+        const currentTime = Date.now();
+
+        if (currentTime - lastFetchTime > timeDelay) {
+          fetchApi(); // เรียกการดึงข้อมูลจาก API
+          setLastFetchTime(currentTime);
+        }
+      }
+    };
+    
+    
+
+    const subscription = Accelerometer.addListener(handleMotion);
+
+    return () => {
+      subscription.remove();
+    };
+  }
+  }, [isFetching, lastFetchTime,modalVisible]);
+
+  const fetchApi = async () => {
+    setIsFetching(true);
+    try {
+      const response = await fetch(global.URL + '/api/fighting'); 
+      const result = await response.json();
+      console.log("api shake result", result);
+      setData(result);
+      setImage(RandomImage());
+    } catch (error) {
+      console.error('Error fetching API:', error);
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  const RandomImage = () => {
+    const randomIndex = Math.floor(Math.random() * ImageShake.length);
+    console.log("randomIndex", ImageShake[randomIndex]);
+    return ImageShake[randomIndex];
+  }
+
+
+
   const username = global.session?.user?.name || 'Guest';
 
   return (
@@ -138,6 +209,29 @@ const HomeScreen = ({navigation}) => {
       <TouchableOpacity style={styles.heartIconContainer} onPress={handleHeartPress}>
         <IconFontAwesome name="heart" size={40} color="#ff0000" />
       </TouchableOpacity>
+      <Modal
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+        animationType="slide"
+        transparent={true}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>ลองเขย่าดูสิ</Text>
+           
+            {image && (
+              <Image source={{uri: global.URL + image}} style={styles.modalImage} />
+            )}
+            
+            <Text style={{fontSize: 16,fontWeight: 'bold',marginBottom: 10}}>{data?.title}</Text>
+            <Text>{data?.text}</Text>
+            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+              <Text style={styles.closeButtonText}>ปิด</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
     </SafeAreaView>
    
     </>
@@ -262,6 +356,42 @@ const styles = StyleSheet.create({
     bottom: 20,
     right: 20,
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+  },
+  modalContent: {
+    width: width * 1, // 85% of screen width
+    maxHeight: height * 0.9, // Limit modal height to 75% of screen height
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+  },
+  modalText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  closeButton: {
+    backgroundColor: "#0077b6",
+    padding: 10,
+    borderRadius: 5,
+  },
+  closeButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  modalImage: {
+    width:200,
+    height: 200,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+
 });
 
 export default HomeScreen;

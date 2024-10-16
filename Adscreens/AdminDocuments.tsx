@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Image, TextInput, Button, StyleSheet, ScrollView, TouchableOpacity, Modal, Alert, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Video, ResizeMode } from 'expo-av';
+import { Ionicons } from "@expo/vector-icons";
 
 export default function AdminDocumentsScreen({ navigation }) {
   const [documents, setDocuments] = useState([]);
@@ -185,7 +186,9 @@ export default function AdminDocumentsScreen({ navigation }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>จัดการสื่อ</Text>
-
+      <TouchableOpacity style={styles.newAddButton} onPress={handleAddNew}>
+        <Text style={styles.newAddButtonText}>เพิ่มสื่อใหม่</Text>
+      </TouchableOpacity>
       {documents.map((doc, index) => (
         <View key={index} style={styles.card}>
           {doc.image ? (
@@ -198,18 +201,18 @@ export default function AdminDocumentsScreen({ navigation }) {
           <Text style={styles.text}>{doc.title}</Text>
           <View style={styles.buttons}>
             <TouchableOpacity style={styles.editButton} onPress={() => handleEdit(index)}>
+            <Ionicons name="create" size={20} color="white" />
               <Text style={styles.saveButtonText}>แก้ไข</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(index)}>
+            <Ionicons name="trash" size={20} color="white" />
               <Text style={styles.saveButtonText}>ลบ</Text>
             </TouchableOpacity>
           </View>
         </View>
       ))}
 
-      <TouchableOpacity style={styles.newAddButton} onPress={handleAddNew}>
-        <Text style={styles.newAddButtonText}>เพิ่มสื่อใหม่</Text>
-      </TouchableOpacity>
+     
 
       <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalView}>
@@ -247,6 +250,7 @@ export default function AdminDocumentsScreen({ navigation }) {
           <TouchableOpacity style={styles.imagePickerButton} onPress={pickImage}>
             <Text style={styles.imagePickerText}>เลือกรูปภาพ</Text>
           </TouchableOpacity>
+          <Text style={{textAlign: 'center', marginVertical: 10}}>หรือ</Text>
           {image && <Image source={{ uri: image.uri }} style={{ width: 200, height: 100, marginTop: 20 }} />}
           <TouchableOpacity style={styles.imagePickerButton} onPress={pickVideo}>
             <Text style={styles.imagePickerText}>เลือกวิดีโอ</Text>
@@ -303,11 +307,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#4CAF50',
     padding: 10,
     borderRadius: 5,
+    width:'auto',
+    height:40,
+    display:'flex',
+    flexDirection:'row',
+    alignItems:'center',
   },
   deleteButton: {
     backgroundColor: '#f44336',
     padding: 10,
     borderRadius: 5,
+    width:'auto',
+    height:40,
+    display:'flex',
+    flexDirection:'row',
+    alignItems:'center',
   },
   saveButtonText: {
     color: '#fff',

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, FlatList, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Button, FlatList, ActivityIndicator, ScrollView, TouchableOpacity,Image } from 'react-native';
 import { Icon } from '@rneui/base';
 
 const HelpCenterScreen = ({ navigation }) => {
@@ -78,11 +78,11 @@ const HelpCenterScreen = ({ navigation }) => {
 
 
   // Scroll to the bottom when a new message is added
-  useEffect(() => {
-    if (flatListRef.current) {
-      flatListRef.current.scrollToEnd({ animated: true });
-    }
-  }, [messages]);
+  // useEffect(() => {
+  //   if (flatListRef.current) {
+  //     flatListRef.current.scrollToEnd({ animated: true });
+  //   }
+  // }, [loading, messages]);
 
   // Format message timestamp
   function formatTime(createAt) {
@@ -102,11 +102,11 @@ const HelpCenterScreen = ({ navigation }) => {
       {/* Chat Section */}
       <View style={styles.chatContainer}>
         <Text style={styles.chatTitle}>Chat with us!</Text>
-        <Text style={styles.chatSubtitle}>บรรยาย</Text>
+       
       </View>
 
       {/* User Selection */}
-      <View style={styles.usersContainer}>
+      {/* <View style={styles.usersContainer}>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
@@ -118,7 +118,7 @@ const HelpCenterScreen = ({ navigation }) => {
             )}
           />
         )}
-      </View>
+      </View> */}
 
       {/* Chat Bubbles */}
       <View style={styles.chatArea}>
@@ -129,11 +129,20 @@ const HelpCenterScreen = ({ navigation }) => {
             ref={flatListRef}
             data={messages}
             keyExtractor={(item, index) => index.toString()}
+            onContentSizeChange={() => flatListRef.current.scrollToEnd({ animated: true })}
             renderItem={({ item }) => (
+              <>
+              <View style={item.fromSelf ? styles.containerSelf : styles.containerOther}>
+              {!item.fromSelf ?               
+              <Image source={{ uri: global.URL + '/images/admin/admin.png' }} style={[styles.userImage]}/>
+              : <Image source={{ uri: global.URL + global.session.user.image }} style={[styles.userImage]}/> }  
               <View style={item.fromSelf ? styles.chatBubbleSelf : styles.chatBubbleOther}>
                 <Text style={styles.chatText}>{item.message}</Text>
                 <Text style={styles.chatTime}>{formatTime(item.createAt)}</Text>
               </View>
+              </View>
+              </>
+              
             )}
           />
         )}
@@ -174,12 +183,13 @@ const styles = StyleSheet.create({
   chatContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FBE9E7',
+    backgroundColor: '#2196f3',
     paddingVertical: 16,
   },
   chatTitle: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#fff',
   },
   chatSubtitle: {
     fontSize: 14,
@@ -232,6 +242,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#023e8a',
     padding: 10,
     borderRadius: 5,
+  },
+  userImage:{
+    width: 30,
+    height: 30,
+    borderRadius: 50,
+  },
+  containerSelf:{
+    
+    display:'flex',
+    flexDirection: 'row-reverse',
+  },
+  containerOther:{
+   
+    display:'flex',
+    flexDirection: 'row',
   }
 });
 

@@ -15,7 +15,11 @@ const LoginScreen = ({ navigation }) => {
         if (session.user) {
           console.log("User already logged in");
           global.session = session;
-          navigation.navigate('MainTabs');
+          if (session.user.role === 2) {        
+            navigation.navigate('MainTabs'); 
+          } else if (session.user.role === 1) {
+            navigation.navigate('AdminTabs'); 
+          } 
         }
       } catch (error) {
         console.log("Error checking login status:", error);
@@ -73,13 +77,13 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-       {/* <Image source={require('../assets/images/MH3.png')} style={{width: 300, height: 300}}  /> */}
+       <Image source={require('../assets/images/MH3.png')} style={{width: 300, height: 300}}  />
       <View style={styles.titleContainer}>
        
-        <Image 
+        {/* <Image 
           source={require('../res/smile-logo-blue.png')} // Adjust the path to your image
           style={styles.image}
-        />
+        /> */}
         <Text style={styles.title}>HAPPYMIND</Text>
       </View>
       <Text style={styles.subtitle}>กรุณาป้อนอีเมลและรหัสผ่านของคุณ</Text>
@@ -123,7 +127,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 20,
+    marginVertical: 10,
   },
   image: {
     width: 40,
@@ -138,7 +142,7 @@ const styles = StyleSheet.create({
   subtitle: { 
     fontSize: 16, 
     color: '#555', 
-    marginBottom: 30 
+    marginBottom: 20 
   },
   input: { 
     width: 280, 

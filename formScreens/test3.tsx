@@ -267,8 +267,16 @@ const styles = StyleSheet.create({
     textAlign: 'center', 
     color: '#888' 
   },
-  questionContainer: { 
-    marginBottom: 20 
+  questionContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    padding: 16,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 3,
   },
   questionText: { 
     fontSize: 18, 

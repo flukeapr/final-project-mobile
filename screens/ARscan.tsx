@@ -4,9 +4,10 @@ import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as FaceDetector from "expo-face-detector";
 
 export default function ARScreen() {
-  const [type, setType] = useState(CameraType.front);
+  
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [faceBounds, setFaceBounds] = useState(null);
+  const [type , setType] = useState(CameraType.front)
   const [expression, setExpression] = useState("");
 
   if (!permission) {
@@ -23,12 +24,7 @@ export default function ARScreen() {
     );
   }
 
-  function toggleCameraType() {
-    setType((current) =>
-      current === CameraType.front ? CameraType.back : CameraType.front
-    );
-  }
-
+  
   const handleFacesDetected = ({ faces }) => {
     if (faces.length > 0) {
       const { bounds, smilingProbability } = faces[0];
@@ -47,18 +43,21 @@ export default function ARScreen() {
       setExpression(""); // Reset expression if no face detected
     }
   };
+  function toggleCameraType() {
+    setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
+  }
 
   return (
     <View style={styles.container}>
       <Camera
         style={styles.camera}
-        type={type}
+        type={CameraType.front}
         onFacesDetected={handleFacesDetected}
         faceDetectorSettings={{
           mode: FaceDetector.FaceDetectorMode.fast,
           detectLandmarks: FaceDetector.FaceDetectorLandmarks.none,
           runClassifications: FaceDetector.FaceDetectorClassifications.all,
-          minDetectionInterval: 100,
+          minDetectionInterval: 500,
           tracking: true,
         }}
       >
@@ -89,11 +88,12 @@ export default function ARScreen() {
           {expression}
         </Text>
       )}
-        <View style={styles.buttonContainer}>
+    {/* <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
             <Text style={styles.text}>Flip Camera</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
+        
       </Camera>
       
     </View>

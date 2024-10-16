@@ -27,6 +27,8 @@ import Test3Screen from './formScreens/test3';
 
 import AdminCommunityScreen from './Adscreens/AdminCommunity';
 import AdminDocumentsScreen from './Adscreens/AdminDocuments';
+import AdminHelpCenter from './Adscreens/AdminHelpCenter';
+import AdminListUsers from './Adscreens/AdminListUsers';
 
 
 const Stack = createNativeStackNavigator();
@@ -104,8 +106,8 @@ const AdminNavigator = () => {
         name="Community"
         component={AdminCommunityScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <Icon name="people-outline" size={24} color={color} />
+          tabBarIcon: ({focused }) => (
+            <Icon  name={focused ? "people" : "people-outline"} type="ionicon" size={24} color={"#0077b6"} />
           ),
           tabBarLabel: 'ชุมชน',
         }}
@@ -114,8 +116,8 @@ const AdminNavigator = () => {
         name="Documents"
         component={AdminDocumentsScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <Icon name="document-text-outline" size={24} color={color} />
+          tabBarIcon: ({focused }) => (
+            <Icon name={focused ? "document-text" : "document-text-outline"} type="ionicon" size={24} color={"#0077b6"} />
           ),
           tabBarLabel: 'เอกสาร',
         }}
@@ -124,8 +126,8 @@ const AdminNavigator = () => {
         name="Profile"
         component={ProfileScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <Icon name="person-outline" size={24} color={color} />
+          tabBarIcon: ({focused }) => (
+            <Icon name={focused ? "person" : "person-outline"} type="ionicon" size={24}  color={"#0077b6"} />
           ),
           tabBarLabel: 'บัญชี',
         }}
@@ -151,7 +153,8 @@ export default function App() {
       <Stack.Screen name="Ai" component={AiScreen} />
       <Stack.Screen name="HelpCenter" component={HelpCenterScreen} />
       <Stack.Screen name="AdminTabs" component={AdminNavigator} />
-      
+      <Stack.Screen name="AdminHelpCenter" component={AdminHelpCenter} />
+      <Stack.Screen name="AdminListUsers" component={AdminListUsers} />
     </Stack.Navigator>
     
   </NavigationContainer>

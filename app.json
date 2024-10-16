@@ -12,7 +12,7 @@
       ]
     ],
     "orientation": "portrait",
-    "icon": "./assets/smile-logo-bg-blue-round.png",
+    "icon": "./assets/images/android-chrome-192x192.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/smile-logo-bg-blue.png",
@@ -29,10 +29,20 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/smile-logo-bg-blue-round.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.flukeapr.finalprojectmobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c49c6db3-8e8c-4204-8308-8ab0ab938cce"
+      }
     }
   }
 }
