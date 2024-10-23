@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Image, TextInput, Button, StyleSheet, ScrollView, TouchableOpacity, Modal, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, Image, TextInput, Button, StyleSheet, ScrollView, TouchableOpacity, Modal, Alert, ActivityIndicator,RefreshControl, StatusBar } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Video, ResizeMode } from 'expo-av';
 import { Ionicons } from "@expo/vector-icons";
 
 export default function AdminDocumentsScreen({ navigation }) {
   const [documents, setDocuments] = useState([]);
-  const [currentDoc, setCurrentDoc] = useState({ uri: '', url: '', title: '', type: 'image', content: '' });
+  const [currentDoc, setCurrentDoc] = useState({ uri: '', url: '', title: '', type: '', content: '' });
   const [isEditing, setIsEditing] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -76,47 +76,83 @@ export default function AdminDocumentsScreen({ navigation }) {
             const res = await fetch(global.URL + '/api/media', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(currentDoc),
+                body: JSON.stringify({...currentDoc,type:currentDoc.content.length > 0 ? 'IN' : "OUT"}),
             });
             const newDoc = await res.json();
             setDocuments([...documents, newDoc]);
             docId = newDoc.id;
+            if (image) {
+              await uploadMedia('image', docId, image);
+          } else if (video) {
+              await uploadMedia('video', docId, video);
+          }
         }
 
         // อัปโหลดไฟล์ภาพหรือวิดีโอหลังจากบันทึกข้อมูลเอกสารแล้ว
-        if (image) {
-            await uploadMedia('image', docId, image);
-        } else if (video) {
-            await uploadMedia('video', docId, video);
-        }
+        
 
-        setCurrentDoc({ uri: '', url: '', title: '', type: 'image', content: '' });
+        setCurrentDoc({ uri: '', url: '', title: '', type: '', content: '' });
         setImage(null);
         setVideo(null);
         setModalVisible(false);
         setLoading(false);
     } catch (error) {
+      console.log(error);
         Alert.alert("ข้อผิดพลาด", "ไม่สามารถบันทึกข้อมูลได้");
         setLoading(false);
     }
 };
   const uploadMedia = async (mediaType, docId, mediaData) => {
-    const formData = new FormData();
-    formData.append(mediaType, {
-      uri: mediaData.uri,
-      type: mediaData.mimeType,
-      name: mediaData.fileName || mediaData.uri.split('/').pop(),
-    });
-
-    const res = await fetch(global.URL + `/api/media/${docId}`, {
-      method: 'PUT',
-      body: formData,
-    });
-
-    const data = await res.json();
-    if (!res.ok) {
-      Alert.alert(`${mediaType.charAt(0).toUpperCase() + mediaType.slice(1)} อัปโหลดล้มเหลว`, data.error || `เกิดข้อผิดพลาดในการอัปโหลด ${mediaType}`);
+   
+    console.log("mediaData", mediaData);
+    
+    if(mediaType === 'image') {
+      const formData = new FormData();
+      formData.append(mediaType, {
+        uri: mediaData.uri || mediaData.url,
+        type: mediaData.mimeType || 'image/jpeg',
+        name: mediaData.fileName || mediaData.uri.split('/').pop(),
+      });
+      const res = await fetch(global.URL + `/api/media/image/${docId}`, {
+        method: 'PUT',
+        body: formData,
+      });
+  
+      const data = await res.json();
+      if (!res.ok) {
+        Alert.alert(`${mediaType.charAt(0).toUpperCase() + mediaType.slice(1)} อัปโหลดล้มเหลว`, data.error || `เกิดข้อผิดพลาดในการอัปโหลด ${mediaType}`);
+        await fetch(
+          `${global.URL}/api/media/${docId}`,
+          {
+            method: "DELETE",
+          }
+        )
+      }
+    }else if(mediaType === 'video') {
+      const formData = new FormData();
+      formData.append(mediaType, {
+        uri: mediaData.uri ,
+        type: mediaData.type || 'video/mp4',
+        name: mediaData.fileName || mediaData.uri.split('/').pop(),
+        size: mediaData.fileSize || 0
+      });
+      const res = await fetch(global.URL + `/api/media/video/${docId}`, {
+        method: 'PUT',
+        body: formData,
+      });
+  
+      const data = await res.json();
+      if (!res.ok) {
+        Alert.alert(`${mediaType.charAt(0).toUpperCase() + mediaType.slice(1)} อัปโหลดล้มเหลว`, data.error || `เกิดข้อผิดพลาดในการอัปโหลด ${mediaType}`);
+        await fetch(
+          `${global.URL}/api/media/${docId}`,
+          {
+            method: "DELETE",
+          }
+        )
+      }
     }
+    
   };
 
   const handleEdit = (index) => {
@@ -154,11 +190,12 @@ export default function AdminDocumentsScreen({ navigation }) {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [16, 9],
+      aspect: [9, 16],
       quality: 1,
     });
 
     if (!result.canceled) {
+      console.log(result.assets[0]);
       setImage(result.assets[0]);
     }
   };
@@ -167,11 +204,12 @@ export default function AdminDocumentsScreen({ navigation }) {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Videos,
       allowsEditing: true,
-      aspect: [16, 9],
+      aspect: [9, 16],
       quality: 1,
     });
 
     if (!result.canceled) {
+      console.log(result.assets[0]);
       setVideo(result.assets[0]);
     }
   };
@@ -183,8 +221,17 @@ export default function AdminDocumentsScreen({ navigation }) {
     setModalVisible(true);
   };
 
+  const clearState = ()=>{
+    setCurrentDoc({ uri: '', url: '', title: '', type: 'image', content: '' });
+    setImage(null);
+    setVideo(null);
+    setIsEditing(false);
+    setEditIndex(null);
+    setModalVisible(false);
+  }
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} refreshControl={<RefreshControl refreshing={loading} onRefresh={fetchData} />}>
       <Text style={styles.title}>จัดการสื่อ</Text>
       <TouchableOpacity style={styles.newAddButton} onPress={handleAddNew}>
         <Text style={styles.newAddButtonText}>เพิ่มสื่อใหม่</Text>
@@ -198,6 +245,7 @@ export default function AdminDocumentsScreen({ navigation }) {
           ) : doc.content ? (
             <Text style={styles.articleContent}>{doc.content}</Text>
           ) : null}
+           {!doc.image && !doc.video && <Image source={{uri: global.URL + '/media/default.png'}}   style={styles.image}/>}
           <Text style={styles.text}>{doc.title}</Text>
           <View style={styles.buttons}>
             <TouchableOpacity style={styles.editButton} onPress={() => handleEdit(index)}>
@@ -250,16 +298,18 @@ export default function AdminDocumentsScreen({ navigation }) {
           <TouchableOpacity style={styles.imagePickerButton} onPress={pickImage}>
             <Text style={styles.imagePickerText}>เลือกรูปภาพ</Text>
           </TouchableOpacity>
-          <Text style={{textAlign: 'center', marginVertical: 10}}>หรือ</Text>
+          {/* <Text style={{textAlign: 'center', marginVertical: 10}}>หรือ</Text> */}
           {image && <Image source={{ uri: image.uri }} style={{ width: 200, height: 100, marginTop: 20 }} />}
-          <TouchableOpacity style={styles.imagePickerButton} onPress={pickVideo}>
+          {/* <TouchableOpacity style={styles.imagePickerButton} onPress={pickVideo}>
             <Text style={styles.imagePickerText}>เลือกวิดีโอ</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           {video && <Video ref={videoRef} source={{ uri: video.uri }} resizeMode={ResizeMode.CONTAIN} style={{ width: 200, height: 100, marginTop: 20 }} />}
           {loading ? <ActivityIndicator size="large" color="#0000ff" /> : (
             <>
-              <Button title={isEditing ? "บันทึกการเปลี่ยนแปลง" : "บันทึก"} onPress={handleSave} />
-              <Button title="ยกเลิก" onPress={() => setModalVisible(false)} />
+              <Button  title={isEditing ? "บันทึกการเปลี่ยนแปลง" : "บันทึก"} onPress={handleSave}  />
+              <Button title="ยกเลิก" onPress={() => {
+                clearState()
+                }} />
             </>
           )}
         </View>
@@ -271,6 +321,7 @@ export default function AdminDocumentsScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    
   },
   title: {
     fontSize: 20,

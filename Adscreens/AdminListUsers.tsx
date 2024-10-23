@@ -1,4 +1,4 @@
-import { View, Text,StyleSheet, TouchableOpacity, FlatList, Modal, Dimensions, Image, ActivityIndicator } from 'react-native'
+import { View, Text,StyleSheet, TouchableOpacity, FlatList, Modal, Dimensions, Image, ActivityIndicator, StatusBar, SafeAreaView } from 'react-native'
 import {useState, useEffect} from 'react'
 
 
@@ -56,7 +56,9 @@ export default function AdminListUsers({navigation}) {
     }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}> 
+    <View style={styles.text}><Text style={{color:'white',fontSize:16}}>เลือกแชทกับผู้ใช้</Text></View>
+    <View >
     
         <FlatList
         
@@ -104,6 +106,7 @@ export default function AdminListUsers({navigation}) {
       />
     
     </View>
+    </SafeAreaView>
   )
 }
 
@@ -112,5 +115,15 @@ const styles = StyleSheet.create({
         flex:1,
         backgroundColor:'#ffffff',
         
+    },
+    text:{
+      backgroundColor:'#2196f3',
+      width:'100%',
+      height:40,
+      display:'flex',
+      justifyContent:'center',
+      alignItems:'center',
+      flexDirection:'row',
+      
     }
 })

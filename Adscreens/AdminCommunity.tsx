@@ -10,6 +10,8 @@ import {
   Alert,
   Modal,
   Dimensions,
+  RefreshControl,
+  ActivityIndicator
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker"; // Import ImagePicker for image handling
@@ -75,6 +77,8 @@ const AdminCommunityScreen = () => {
       }
     } catch (error) {
       console.log(error);
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -287,9 +291,9 @@ const AdminCommunityScreen = () => {
           const formData = new FormData();
           formData.append("image", {
             uri: uploadImage.uri,
-            type: uploadImage.mimeType,
+            type: uploadImage.mimeType || "image/jpeg",
             name: uploadImage.fileName || "filename",
-            size: uploadImage.fileSize,
+            size: uploadImage.fileSize || 0,
           });
 
           try {
@@ -366,7 +370,7 @@ const AdminCommunityScreen = () => {
               : post
           )
         );
-        setIsLiked((prev) => prev.filter((like) => like.postId !== postId));
+        setIsLiked((prev) => (prev ? prev.filter((like) => like.postId !== postId) : []));
         const res = await fetch(global.URL + "/api/post/like/un-like", {
           method: "POST",
           headers: {
@@ -385,10 +389,7 @@ const AdminCommunityScreen = () => {
               : post
           )
         );
-        setIsLiked((prev) => [
-          ...prev,
-          { postId, userId: global.session.user.id },
-        ]);
+        setIsLiked((prev) => prev ? [...prev, {postId, userId: global.session.user.id}] : [{postId, userId: global.session.user.id}]);
         const res = await fetch(global.URL + "/api/post/like", {
           method: "POST",
           headers: {
@@ -541,12 +542,20 @@ const AdminCommunityScreen = () => {
       )}
     </View>
   );
-
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text>กำลังโหลด...</Text>
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.header}>ชุมชน</Text>
       <FlatList
         data={posts}
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={getPost} />}
         renderItem={renderItem}
         keyExtractor={(item) => item.postId.toString()}
         contentContainerStyle={styles.topicsContainer}
@@ -778,6 +787,12 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 15,
+  },
+  loadingContainer: {
+    backgroundColor:"#dceaf7",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Button, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, Button, TouchableOpacity, Image, ScrollView, Alert, StatusBar } from 'react-native';
 
 
 const ProfileScreen = ({navigation}) => {
@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 16,
     backgroundColor: '#dceaf7',
+    
   },
   profileHeader: {
     alignItems: 'center',

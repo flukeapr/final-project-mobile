@@ -9,7 +9,8 @@ import {
   Alert,
   Dimensions,
   Modal,
-  TouchableOpacity
+  TouchableOpacity,
+  RefreshControl
 } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 
@@ -88,7 +89,7 @@ const ResultScreen = ({navigation}) => {
       }
     } catch (error) {
       console.error(error);
-      Alert.alert("An error occurred while fetching quiz results.");
+      // Alert.alert("An error occurred while fetching quiz results.");
     } finally {
       setLoading(false);
     }
@@ -136,7 +137,7 @@ const postRq20data = [
   return (
     <>
    
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} refreshControl={<RefreshControl refreshing={loading} onRefresh={fetchQuizResults} />}>
       {/* Test 1 Results */}
       <View style={styles.quizContainer}>
         <Text style={styles.quizHeader}>แบบประเมิน RQ 3 ข้อ</Text>

@@ -1,4 +1,4 @@
-import { View, Text,StyleSheet, TouchableOpacity, FlatList, Modal,ActivityIndicator, Dimensions,Image,TextInput } from 'react-native'
+import { View, Text,StyleSheet, TouchableOpacity, FlatList, Modal,ActivityIndicator, Dimensions,Image,TextInput, StatusBar } from 'react-native'
 import { useEffect, useRef, useState } from 'react'
 import { Icon } from '@rneui/base';
 export default function AdminHelpCenter({navigation,route}) {
@@ -155,6 +155,7 @@ const styles = StyleSheet.create({
     container:{
         flex:1,
         backgroundColor:'#ffffff',
+        paddingTop:StatusBar.currentHeight
     },
     containerSelf:{
     

@@ -183,7 +183,7 @@ const PersonalDataScreen = ({ navigation, route }) => {
           <TouchableOpacity onPress={() => setReligion("พุทธ")} style={[styles.optionButton, religion === "พุทธ" && styles.optionButtonSelected]}>
             <Text style={styles.optionText}>พุทธ</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setReligion("คริสต์")} style={[styles.optionButton, religion === "คริสต์  " && styles.optionButtonSelected]}>
+          <TouchableOpacity onPress={() => setReligion("คริสต์")} style={[styles.optionButton, religion === "คริสต์" && styles.optionButtonSelected]}>
             <Text style={styles.optionText}>คริสต์</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setReligion("อิสลาม")} style={[styles.optionButton, religion === "อิสลาม" && styles.optionButtonSelected]}>

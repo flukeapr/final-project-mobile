@@ -10,6 +10,8 @@ import {
   Alert,
   Modal,
   Dimensions,
+  RefreshControl,
+  ActivityIndicator
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker"; // Import ImagePicker for image handling
@@ -76,6 +78,8 @@ const CommunityScreen = ({ navigation }) => {
       }
     } catch (error) {
       console.log(error);
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -144,7 +148,7 @@ const CommunityScreen = ({ navigation }) => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [16, 9],
+      aspect: [9, 16],
       quality: 1,
     });
     if (!result.canceled) {
@@ -182,9 +186,9 @@ const CommunityScreen = ({ navigation }) => {
           const formData = new FormData();
           formData.append("image", {
             uri: uploadImage.uri,
-            type: uploadImage.mimeType,
+            type: uploadImage.mimeType || "image/jpeg",
             name: uploadImage.fileName || "filename",
-            size: uploadImage.fileSize,
+            size: uploadImage.fileSize || 0,
           });
 
           try {
@@ -212,6 +216,7 @@ const CommunityScreen = ({ navigation }) => {
         setPostText("");
         setUploadImage(null);
         getPost(); // Refresh posts
+        setModalVisible(false);
       } else {
         Alert.alert("เกิดข้อผิดพลาด");
       }
@@ -242,7 +247,7 @@ const CommunityScreen = ({ navigation }) => {
               : post
           )
         );
-        setIsLiked((prev) => prev.filter((like) => like.postId !== postId));
+        setIsLiked((prev) => (prev ? prev.filter((like) => like.postId !== postId) : []));
         const res = await fetch(global.URL + "/api/post/like/un-like", {
           method: "POST",
           headers: {
@@ -358,22 +363,7 @@ const CommunityScreen = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
       </View>
-      <View style={{ display: "flex", flexDirection: "row" , justifyContent: "center", alignItems: "center" }}>
-      <TextInput
-            style={styles.commentInput}
-            placeholder="เพิ่มความคิดเห็น..."
-            value={commentText[item.postId] || ""}
-            onChangeText={(text) => handleWriteComment(item.postId, text)}
-          />
-          <TouchableOpacity
-            onPress={() => handleComment(item.postId)}
-            style={styles.commentButton}
-          >
-            <Text style={{ color: "#fff", fontSize: 16, fontWeight: "bold" }}>
-              ส่ง
-            </Text>
-          </TouchableOpacity>
-      </View>
+     
       {item.showComments && (
         <View>
           {item.comments.map((comment) => (
@@ -398,14 +388,39 @@ const CommunityScreen = ({ navigation }) => {
          
         </View>
       )}
+       <View style={{ display: "flex", flexDirection: "row" , justifyContent: "center", alignItems: "center" }}>
+      <TextInput
+            style={styles.commentInput}
+            placeholder="เพิ่มความคิดเห็น..."
+            value={commentText[item.postId] || ""}
+            onChangeText={(text) => handleWriteComment(item.postId, text)}
+          />
+          <TouchableOpacity
+            onPress={() => handleComment(item.postId)}
+            style={styles.commentButton}
+          >
+            <Text style={{ color: "#fff", fontSize: 16, fontWeight: "bold" }}>
+              ส่ง
+            </Text>
+          </TouchableOpacity>
+      </View>
     </View>
   );
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text>กำลังโหลด...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>ชุมชน</Text>
       <View style={styles.buttonContainer}></View>
       <FlatList
+      refreshControl={<RefreshControl refreshing={loading} onRefresh={getPost} />} 
         data={posts}
         renderItem={renderItem}
         keyExtractor={(item) => item.postId.toString()}
@@ -653,6 +668,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 10,
     padding: 20,
+  },
+  loadingContainer: {
+    backgroundColor:"#dceaf7",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
