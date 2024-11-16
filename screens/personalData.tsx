@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'react-native';
 
 const PersonalDataScreen = ({ navigation, route }) => {
-  const { userId } = route.params; // Receive userId from SignupScreen
+   const { userId  } = route.params; // Receive userId from SignupScreen
   const [gender, setGender] = useState("");
   const [ageGroup, setAgeGroup] = useState("");
   const [age, setAge] = useState("");
@@ -204,8 +204,11 @@ const PersonalDataScreen = ({ navigation, route }) => {
         {/* สถานะสุขภาพ */}
         <Text style={styles.label}>7. โรคประจำตัว</Text>
         <View style={styles.optionContainer}>
+        <TouchableOpacity onPress={() => setHasDisease(false)} style={[styles.optionButton, !hasDisease && styles.optionButtonSelected]}>
+            <Text style={styles.optionText}>{"ไม่มี"}</Text>
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => setHasDisease(!hasDisease)} style={[styles.optionButton, hasDisease && styles.optionButtonSelected]}>
-            <Text style={styles.optionText}>{hasDisease ? "มี" : "ไม่มี"}</Text>
+            <Text style={styles.optionText}>{"มี" }</Text>
           </TouchableOpacity>
           {hasDisease && (
             <>
@@ -230,8 +233,11 @@ const PersonalDataScreen = ({ navigation, route }) => {
         {/* ใกล้ชิดผู้ป่วย */}
         <Text style={styles.label}>8. คุณมีผู้ป่วยใกล้ชิดไหม</Text>
         <View style={styles.optionContainer}>
+        <TouchableOpacity onPress={() => setNearby(false)} style={[styles.optionButton, !nearby && styles.optionButtonSelected]}>
+            <Text style={styles.optionText}>{ "ไม่มี"}</Text>
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => setNearby(!nearby)} style={[styles.optionButton, nearby && styles.optionButtonSelected]}>
-            <Text style={styles.optionText}>{nearby ? "มี" : "ไม่มี"}</Text>
+            <Text style={styles.optionText}>{ "มี"}</Text>
           </TouchableOpacity>
           {nearby && (
             <TextInput

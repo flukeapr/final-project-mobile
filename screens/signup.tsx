@@ -7,7 +7,8 @@ const SignupScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  
+  const [emailError, setEmailError] = useState('')
+
   const handleRegister = async () => {
     if (password !== confirmPassword) {
       Alert.alert("Error", "Passwords do not match");
@@ -48,6 +49,15 @@ const SignupScreen = ({ navigation }) => {
     }
   };
 
+  function validateEmail(text) {
+     if (text && !text.includes('@')) {
+      setEmailError('กรุณาใส่อีเมลให้ถูกต้อง * มี @ *')
+    } else {
+      setEmailError('')
+    }
+    setEmail(text)
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image source={require('../assets/images/MH1.png')} style={{width:300,height:200}} />
@@ -60,15 +70,19 @@ const SignupScreen = ({ navigation }) => {
         value={name}
         onChangeText={setName}
       />
+       {emailError ? (
+    <Text style={styles.errorText}>{emailError}</Text>
+  ) : null}
       <TextInput
-        style={styles.input}
+       style={[styles.input, emailError ? styles.inputError : null]}
         placeholder="อีเมล"
         placeholderTextColor="#999"
         value={email}
-        onChangeText={setEmail}
+        onChangeText={validateEmail}
         keyboardType="email-address"
         autoCapitalize="none"
       />
+      
       <TextInput
         style={styles.input}
         placeholder="สร้างรหัสผ่าน"
@@ -156,6 +170,14 @@ const styles = StyleSheet.create({
     color: '#0077b6', 
     fontWeight: 'bold',
   },
+  inputError: {
+    borderColor: 'red',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginVertical: 2,
+  }
 });
 
 export default SignupScreen;

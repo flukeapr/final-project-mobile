@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "white",
+    color: "#0077b6",
   },
   faceBorder: {
     position: "absolute",
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   expressionText: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "white",
+    color: "black",
     marginTop: 20,
     textAlign: "center",
   }

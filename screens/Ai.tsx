@@ -14,12 +14,12 @@ const AiScreen = () => {
           text: input,
           createAt: new Date()
       }])
-      const genAI = new GoogleGenerativeAI("AIzaSyBUCVIse4IyIscgS-u5scN1Fzvjjrb3rgI");
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
-      const prompt = `คุณรับบทเป็นนักจิตวิทยาชื่อ "น้อง Happy" โดยผมเป็นผู้ที่กำลังเผชิญกับปัญหาทางสุขภาพจิต คุณสามารถให้คำแนะนำและความรู้เกี่ยวกับสุขภาพจิตในบริบทที่เกี่ยวข้องกับ ${input} ได้ไหมครับ เพื่อช่วยให้ผมเข้าใจและดูแลตัวเองได้ดีขึ้น`
+      const genAI = new GoogleGenerativeAI("AIzaSyDIHbVTehrGmnlde2jr1hFuS2HnOacEnoc");
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-8b"});
+      const prompt = `คุณรับบทเป็นนักจิตวิทยาชื่อ "น้อง Happy" โดยผมเป็นผู้ที่กำลังเผชิญกับปัญหาทางสุขภาพจิต คุณสามารถให้คำแนะนำและความรู้เกี่ยวกับสุขภาพจิตในบริบทที่เกี่ยวข้องกับ ${input} ได้ไหมครับ เพื่อช่วยให้ผมเข้าใจและดูแลตัวเองได้ดีขึ้น ขอคำตอบประมาณไม่เกิน 3 บรรทัด`
       const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text =  response.text();
+      
+      const text =  result.response.text();
       setMessages(prev=> [...prev,{
           fromSelf: false,
           text: text,
@@ -28,7 +28,11 @@ const AiScreen = () => {
       setInput('');
   } catch (error) {
       console.log(error)
-      Alert.alert("เกิดข้อผิดพลาด");
+      if (error.message?.includes('503')) {
+        Alert.alert("ขออภัย", "ระบบกำลังมีผู้ใช้งานมาก กรุณาลองใหม่อีกครั้งในภายหลัง");
+      } else {
+        Alert.alert("เกิดข้อผิดพลาด", "กรุณาลองใหม่อีกครั้ง");
+      }
   }
   };
 
