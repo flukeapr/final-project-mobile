@@ -31,11 +31,11 @@ const TestScreen = () => {
         const data = await res.json();
         if (res.ok) {
           if (data.message === "Have a Pre and Post Quiz") {
-            setQuizStatuses(prev => ({ ...prev, [testKey]: "Completed" }));
+            setQuizStatuses(prev => ({ ...prev, [testKey]: "ทำทั้งหมดแล้ว" }));
           } else if (data.message === "Have a Pre Quiz") {
-            setQuizStatuses(prev => ({ ...prev, [testKey]: "Post Available" }));
+            setQuizStatuses(prev => ({ ...prev, [testKey]: "ทำหลังกิจกรรม" }));
           } else {
-            setQuizStatuses(prev => ({ ...prev, [testKey]: "Pre Available" }));
+            setQuizStatuses(prev => ({ ...prev, [testKey]: "ทำก่อนกิจกรรม" }));
           }
         }
       } catch (error) {
@@ -53,11 +53,11 @@ const TestScreen = () => {
   // Function to return color based on quiz status
   const getStatusColor = (status) => {
     switch (status) {
-      case "Completed":
+      case "ทำทั้งหมดแล้ว":
         return styles.completedStatus;
-      case "Post Available":
+      case "ทำหลังกิจกรรม":
         return styles.postAvailableStatus;
-      case "Pre Available":
+      case "ทำก่อนกิจกรรม":
         return styles.preAvailableStatus;
       default:
         return styles.loadingStatus;
@@ -67,11 +67,11 @@ const TestScreen = () => {
   // Function to return the correct image based on quiz status
   const getStatusImage = (status) => {
     switch (status) {
-      case "Completed":
+      case "ทำทั้งหมดแล้ว":
         return require('../res/Head_flow.png'); // Replace with actual image path
-      case "Post Available":
+      case "ทำหลังกิจกรรม":
         return require('../res/Head_think.png'); // Replace with actual image path
-      case "Pre Available":
+      case "ทำก่อนกิจกรรม":
         return require('../res/Head_question.png'); // Replace with actual image path
       default:
         return require('../res/Head_question.png'); // Replace with actual image path
@@ -80,7 +80,7 @@ const TestScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.header}>แบบทดสอบ</Text>
+      {/* <Text style={styles.header}>แบบทดสอบ</Text> */}
 
       <TouchableOpacity style={styles.testItem} onPress={() => navigation.navigate('Test1')}>
         <View style={styles.testItemContent}>

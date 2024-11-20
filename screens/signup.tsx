@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, ScrollView,Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, ScrollView,Image,ActivityIndicator,Modal } from 'react-native';
 import "../global"
 
 const SignupScreen = ({ navigation }) => {
@@ -8,6 +8,9 @@ const SignupScreen = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [emailError, setEmailError] = useState('')
+  const [loading, setLoading] = useState(false)
+ 
+
 
   const handleRegister = async () => {
     if (password !== confirmPassword) {
@@ -18,6 +21,8 @@ const SignupScreen = ({ navigation }) => {
       Alert.alert("Error", "Please fill all the fields");
       return;
     }
+    setLoading(true)
+   
     try {
       const res = await fetch(global.URL + "/api/register", {
         method: "POST",
@@ -46,6 +51,8 @@ const SignupScreen = ({ navigation }) => {
     } catch (error) {
       console.log("Network or code error:", error); // Log network or other errors
       Alert.alert("Error", "Something went wrong. Please check your network connection or try again later.");
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -106,6 +113,11 @@ const SignupScreen = ({ navigation }) => {
       มีบัญชีอยู่แล้ว?{' '}
         <Text style={styles.link} onPress={() => navigation.navigate('Login')}>เข้าสู่ระบบ</Text>
       </Text>
+      <Modal visible={loading} transparent={true} animationType="fade">
+        <View style={styles.modalContainer}>
+          <ActivityIndicator size="large" color="#0077b6" />
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -177,7 +189,13 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 12,
     marginVertical: 2,
-  }
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
 });
 
 export default SignupScreen;

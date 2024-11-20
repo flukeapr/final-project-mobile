@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, ScrollView,SafeAreaView,ActivityIndicator,Modal } from 'react-native';
 
 const PersonalDataScreen = ({ navigation, route }) => {
    const { userId  } = route.params; // Receive userId from SignupScreen
@@ -15,13 +15,14 @@ const PersonalDataScreen = ({ navigation, route }) => {
   const [mentalDisease, setMentalDisease] = useState("");
   const [nearby, setNearby] = useState(false);
   const [nearbyRelation, setNearbyRelation] = useState("");
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async () => {
-    if (!gender || !ageGroup || (!age && !ageGroup) || !year || !faculty || !major || !religion) {
-      Alert.alert("Error", "กรุณากรอกข้อมูลให้ครบถ้วน");
+    if (!gender  || (!age && !ageGroup) || !year || !faculty || !major || !religion) {
+      Alert.alert("เกิดข้อผิดพลาด", "กรุณากรอกข้อมูลให้ครบถ้วน");
       return;
     }
-
+    setLoading(true)
     const userData = {
       userId,
       gender,
@@ -58,11 +59,23 @@ const PersonalDataScreen = ({ navigation, route }) => {
     } catch (error) {
       console.log("Network or code error:", error);
       Alert.alert("Error", "Something went wrong. Please check your network connection or try again later.");
+    }finally{
+      setLoading(false)
     }
   };
 
+  useEffect(() => {
+    console.log(age);
+  }, [age]);
+
+  function selectAgeInput(age:string){
+    setAgeGroup('')
+    setAge(age)
+  }
+
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
+   
+    <ScrollView>
       <View style={styles.container}>
         <Text style={styles.title}>แบบสอบถามข้อมูลส่วนบุคคล</Text>
         
@@ -83,13 +96,13 @@ const PersonalDataScreen = ({ navigation, route }) => {
         {/* อายุ */}
         <Text style={styles.label}>2. อายุ</Text>
         <View style={styles.optionContainer}>
-          <TouchableOpacity onPress={() => setAgeGroup("ต่ำกว่า 20 ปี")} style={[styles.optionButton, ageGroup === "ต่ำกว่า 20 ปี" && styles.optionButtonSelected]}>
+          <TouchableOpacity onPress={() => {setAgeGroup("ต่ำกว่า 20 ปี"),setAge('')}} style={[styles.optionButton, ageGroup === "ต่ำกว่า 20 ปี" && styles.optionButtonSelected]}>
             <Text style={styles.optionText}>ต่ำกว่า 20 ปี</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setAgeGroup("20-25 ปี")} style={[styles.optionButton, ageGroup === "20-25 ปี" && styles.optionButtonSelected]}>
+          <TouchableOpacity onPress={() => {setAgeGroup("20-25 ปี"),setAge('')}} style={[styles.optionButton, ageGroup === "20-25 ปี" && styles.optionButtonSelected]}>
             <Text style={styles.optionText}>20-25 ปี</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setAgeGroup("26-30 ปี")} style={[styles.optionButton, ageGroup === "26-30 ปี" && styles.optionButtonSelected]}>
+          <TouchableOpacity onPress={() => {setAgeGroup("26-30 ปี"),setAge('')}} style={[styles.optionButton, ageGroup === "26-30 ปี" && styles.optionButtonSelected]}>
             <Text style={styles.optionText}>26-30 ปี</Text>
           </TouchableOpacity>
           <TextInput
@@ -97,6 +110,7 @@ const PersonalDataScreen = ({ navigation, route }) => {
             placeholder="หรือโปรดระบุอายุ..."
             placeholderTextColor="#999"
             value={age}
+            onFocus={()=>setAgeGroup('')}
             onChangeText={setAge}
             keyboardType="numeric"
           />
@@ -129,10 +143,12 @@ const PersonalDataScreen = ({ navigation, route }) => {
             placeholder="มากกว่าปี 6 โปรดระบุ..."
             placeholderTextColor="#999"
             value={year}
+            onFocus={()=>setYear('')}
             onChangeText={setYear}
             keyboardType="numeric"
           />
         </View>
+        
 
         {/* สำนักวิชา */}
         <Text style={styles.label}>4. สำนักวิชา</Text>
@@ -210,7 +226,9 @@ const PersonalDataScreen = ({ navigation, route }) => {
           <TouchableOpacity onPress={() => setHasDisease(!hasDisease)} style={[styles.optionButton, hasDisease && styles.optionButtonSelected]}>
             <Text style={styles.optionText}>{"มี" }</Text>
           </TouchableOpacity>
-          {hasDisease && (
+          
+        </View>
+        {hasDisease && (
             <>
               <TextInput
                 style={styles.input}
@@ -228,10 +246,9 @@ const PersonalDataScreen = ({ navigation, route }) => {
               />
             </>
           )}
-        </View>
 
         {/* ใกล้ชิดผู้ป่วย */}
-        <Text style={styles.label}>8. คุณมีผู้ป่วยใกล้ชิดไหม</Text>
+        <Text style={styles.label}>8. บุคคลใกล้ชิดมีปัญหาสุขภาพจิต</Text>
         <View style={styles.optionContainer}>
         <TouchableOpacity onPress={() => setNearby(false)} style={[styles.optionButton, !nearby && styles.optionButtonSelected]}>
             <Text style={styles.optionText}>{ "ไม่มี"}</Text>
@@ -239,22 +256,46 @@ const PersonalDataScreen = ({ navigation, route }) => {
           <TouchableOpacity onPress={() => setNearby(!nearby)} style={[styles.optionButton, nearby && styles.optionButtonSelected]}>
             <Text style={styles.optionText}>{ "มี"}</Text>
           </TouchableOpacity>
-          {nearby && (
-            <TextInput
+          
+        </View>
+        {nearby && (
+            <>
+            <Text style={styles.label}>หากบุคคลใกล้ชิดมีปัญหาสุขภาพจิต มีความสัมพันธ์กับท่านเป็น </Text>
+            <View style={{width:'50%',flexDirection:'row'}}>
+              
+            <TouchableOpacity onPress={() => setNearbyRelation('คนรู้จัก')} style={[styles.optionButton, nearbyRelation === 'คนรู้จัก' && styles.optionButtonSelected]}>
+            <Text style={styles.optionText}>{ "คนรู้จัก"}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setNearbyRelation('เพื่อน')} style={[styles.optionButton, nearbyRelation === 'เพื่อน' && styles.optionButtonSelected]}>
+            <Text style={styles.optionText}>{ "เพื่อน"}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setNearbyRelation('คนในครอบครัว')} style={[styles.optionButton, nearbyRelation === 'คนในครอบครัว' && styles.optionButtonSelected]}>
+            <Text style={styles.optionText}>{ "คนในครอบครัว"}</Text>
+          </TouchableOpacity>
+            </View>
+             {/* <TextInput
               style={styles.input}
               placeholder="โปรดระบุความสัมพันธ์กับผู้ป่วย"
               placeholderTextColor="#999"
               value={nearbyRelation}
               onChangeText={setNearbyRelation}
-            />
+            /> */}
+            
+            </>
+           
           )}
-        </View>
 
         <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
           <Text style={styles.submitButtonText}>ยืนยันข้อมูล</Text>
         </TouchableOpacity>
       </View>
+      <Modal visible={loading} transparent={true} animationType="fade">
+        <View style={styles.modalContainer}>
+          <ActivityIndicator size="large" color="#0077b6" />
+        </View>
+      </Modal>
     </ScrollView>
+   
   );
 };
 
@@ -340,6 +381,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
 });
 

@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Linking, Modal, Button, Dimensions } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Linking, Modal, Button, Dimensions,RefreshControl } from 'react-native';
 import { Video } from 'expo-av';
+import { ButtonGroup } from '@rneui/themed';
 
-// Get screen dimensions
 const { width, height } = Dimensions.get('window');
+
+
 
 export default function DocumentsScreen({ navigation }) {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selected, setSelected] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -15,7 +18,7 @@ export default function DocumentsScreen({ navigation }) {
         setLoading(true);
         const res = await fetch(global.URL + '/api/media');
         const data = await res.json();
-        console.log(data);  // Log the API response to inspect the data structure
+         
         setDocuments(data);
         setLoading(false);
       } catch (error) {
@@ -26,7 +29,7 @@ export default function DocumentsScreen({ navigation }) {
     fetchData();
   }, []);
 
-  const handleOpenLink = (url) => {
+  const handleOpenLink = (url:string) => {
     Linking.openURL(url).catch((err) => Alert.alert("Error", "Failed to open URL."));
   };
 
@@ -34,6 +37,9 @@ export default function DocumentsScreen({ navigation }) {
    
       
     <>
+    <View style={styles.header}>
+      <Text style={styles.headerText}>สื่อให้ความรู้</Text>
+    </View>
       {loading ? (
         <View style={[styles.container, styles.horizontal]}>
           <ActivityIndicator size="large" color="#0000ff" />
@@ -42,12 +48,27 @@ export default function DocumentsScreen({ navigation }) {
       ) :(
         <>
          <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>สื่อให้ความรู้</Text>
-
+       
+        <ButtonGroup 
+        selectedIndex={selected}
+        onPress={(value)=>setSelected(value)}
+        buttons={['ทั้งหมด','พลังใจ','ความรู้สุขภาพจิต']}
+        
+        containerStyle={{width:width*0.9,alignSelf:'center',borderRadius:10,marginBottom:15}}
+        />
         {/* Section for Images */}
-      <Text style={styles.subtitle}>ภาพสื่อให้ความรู้</Text>
+      {/* <Text style={styles.subtitle}>ภาพสื่อให้ความรู้</Text> */}
+      
       <View style={styles.grid}>
-        {documents.filter(doc => doc.image).map((doc, index) => (
+        {documents.filter(doc => doc.image).filter((item)=> {
+          if(selected === 0){
+            return true;
+          }else if(selected === 1){
+            return item.category === 'พลังใจ';
+          }else if(selected === 2){
+            return item.category === 'ความรู้สุขภาพจิต';
+          }
+        }).map((doc, index) => (
           <TouchableOpacity key={index} style={styles.card} onPress={() => handleOpenLink(doc.url)}>
             <Image source={{ uri: global.URL + doc.image }} style={styles.image} />
             <Text style={styles.text}>{doc.title}</Text>
@@ -85,7 +106,8 @@ const VideoCard = ({ videoUri, title, content }) => {
   };
 
   return (
-    <View>
+    <View style={{backgroundColor:'#dceaf7'}}>
+      
       {/* Thumbnail and Title */}
       <TouchableOpacity style={styles.cardVDO} onPress={handlePressVideo}>
         <Video
@@ -142,6 +164,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#023e8a', // Dark blue
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    elevation: 5,
+  },
+  headerText: {
+    fontSize: 20,
+    color: '#ffffff',
+    fontWeight: 'bold',
   },
   subtitle: {
     fontSize: 20,

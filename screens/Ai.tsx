@@ -40,10 +40,10 @@ const AiScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Text style={styles.title}>พูดคุยกับน้อง{" "}HAPPY</Text>
        <Image source={require('../res/Head_happy.png')} style={styles.image} />
-      </View>
+      </View> */}
       <FlatList
         data={messages}
         renderItem={({ item }) => (

@@ -109,7 +109,7 @@ const ResultScreen = ({navigation}) => {
     setSelectQuiz([quiz1,quiz2]);
   }
   
-
+  console.log(preRq20)
   const preRq20data = [ 
     {value: preRq20?.pressure || 0 , label: 'ความทนต่อแรงกดดัน', frontColor: '#177AD5' ,topLabelComponent: () => (
       <Text style={{color: '#177AD5', fontSize: 16, marginBottom: 6}}>{preRq20?.pressure || 0 }</Text>
@@ -136,6 +136,9 @@ const postRq20data = [
 
   return (
     <>
+    <View style={styles.header}>
+      <Text style={styles.headerText}>ผลการประเมิน</Text>
+    </View>
    
     <ScrollView style={styles.container} refreshControl={<RefreshControl refreshing={loading} onRefresh={fetchQuizResults} />}>
       {/* Test 1 Results */}
@@ -324,6 +327,21 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: "#dceaf7",
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#023e8a', // Dark blue
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    elevation: 5,
+  },
+  headerText: {
+    fontSize: 20,
+    color: '#ffffff',
+    fontWeight: 'bold',
   },
   quizContainer: {
     marginBottom: 30,

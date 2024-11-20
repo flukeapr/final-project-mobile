@@ -134,8 +134,9 @@ const Test1Screen = () => {
     <ScrollView style={styles.container}>
       <View style={styles.headerContainer}>
         <Animatable.Text animation="fadeInDown" style={styles.header}>
-          แบบทดสอบ
+        แบบประเมิน RQ  3 ข้อ 
         </Animatable.Text>
+        <Text style={{fontSize:16}}>ตัวเลขคะแนน ถ้า 1 หมายถึง น้อย และ 10 หมายถึง มาก</Text>
       </View>
 
       {currentQuestion >= 1 && (
@@ -199,7 +200,7 @@ const Test1Screen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F0F4F8',
+    backgroundColor: '#dceaf7',
     padding: 16,
   },
   headerContainer: {

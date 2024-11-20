@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingVertical: 30,
-    backgroundColor: '#F0F4F8',
+    backgroundColor: '#dceaf7',
   },
   headerContainer: {
     alignItems: 'center',
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#0288D1',
     paddingVertical: 15,
     borderRadius: 10,
-    marginTop: 20,
+    marginBottom: 40,
   },
   submitButtonText: {
     textAlign: 'center',

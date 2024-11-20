@@ -16,7 +16,11 @@ const LoginScreen = ({ navigation }) => {
           console.log("User already logged in");
           global.session = session;
           if (session.user.role === 2) {        
-            navigation.navigate('MainTabs'); 
+            if(session.user.privacy === 'false'){
+              navigation.navigate('Privacy');
+            }else{
+              navigation.navigate('MainTabs'); 
+            }
           } else if (session.user.role === 1) {
             navigation.navigate('AdminTabs'); 
           } 
@@ -55,10 +59,14 @@ const LoginScreen = ({ navigation }) => {
         global.session = session;
   
         if (session.user.role === 2) {
-          Alert.alert("เข้าสู่ระบบสำเร็จ");
-          navigation.navigate('MainTabs'); 
+          Alert.alert("ยินดีต้อนรับสู่ระบบ","เข้าสู่ระบบสำเร็จ");
+          if(session.user.privacy === 'false'){
+            navigation.navigate('Privacy');
+          }else{
+            navigation.navigate('MainTabs'); 
+          }
         } else if (session.user.role === 1) {
-          Alert.alert("เข้าสู่ระบบสำเร็จ");
+          Alert.alert("ยินดีต้อนรับสู่ระบบ", "เข้าสู่ระบบสำเร็จ");
           navigation.navigate('AdminTabs'); 
         } else {
           Alert.alert("Access Denied", "You do not have the necessary permissions.");

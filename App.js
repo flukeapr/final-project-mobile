@@ -1,9 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View,Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Icon } from "@rneui/base";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 
 import HomeScreen from './screens/home';
@@ -15,6 +16,9 @@ import TestScreen from './screens/test';
 import AiScreen from './screens/Ai';
 import HelpCenterScreen from './screens/helpcenter';
 import ARScreen from './screens/ARscan';
+import MyPost from './screens/MyPost';
+import Privacy from './screens/Privacy';
+import Mood from './screens/Mood';
 
 import LoginScreen from './screens/login';
 import SignupScreen from './screens/signup';
@@ -131,12 +135,14 @@ const AdminNavigator = () => {
           ),
           tabBarLabel: 'บัญชี',
         }}
+        
       />
     </Tab.Navigator>
   );
 }
 export default function App() {
   return (
+    <SafeAreaProvider>
     <NavigationContainer independent={true}>
     <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
@@ -144,19 +150,44 @@ export default function App() {
       <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
       <Stack.Screen name="MainTabs" component={MainTabNavigator} />
       <Stack.Screen name="PersonData" component={PersonalDataScreen} />
-
-      <Stack.Screen name="Test" component={TestScreen} />
-      <Stack.Screen name="Test1" component={Test1Screen} />
-      <Stack.Screen name="Test2" component={Test2Screen} />
-      <Stack.Screen name="Test3" component={Test3Screen} />
-      <Stack.Screen name="AR" component={ARScreen} />
-      <Stack.Screen name="Ai" component={AiScreen} />
-      <Stack.Screen name="HelpCenter" component={HelpCenterScreen} />
+      <Stack.Screen name="Privacy" component={Privacy} />
+      <Stack.Screen name="Test" component={TestScreen} options={{ headerShown: true , headerTitle: 'ประเมินสุขภาพจิต' }} />
+      <Stack.Screen name="MyPost" component={MyPost} options={{ headerShown: true , headerTitle: 'โพสต์ของฉัน' }} />
+      <Stack.Screen name="Test1" component={Test1Screen} options={{headerShown: true, headerTitle: ''}}/>
+      <Stack.Screen name="Test2" component={Test2Screen} options={{headerShown: true, headerTitle: ''}}/>
+      <Stack.Screen name="Test3" component={Test3Screen}  options={{headerShown: true, headerTitle: ''}}/>
+      <Stack.Screen name="AR" component={ARScreen}  />
+      <Stack.Screen name="Ai" component={AiScreen} options={{headerShown: true, headerTitle: () => (
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#023e8a' }}>
+          พูดคุยกับน้อง HAPPY
+        </Text>
+        <Image 
+          source={require('./res/Head_happy.png')} 
+          style={{ width: 50, height: 50, marginLeft: 10 }}
+        />
+      </View>
+    )}} />
+      <Stack.Screen name="HelpCenter" component={HelpCenterScreen}  options={{headerShown: true, headerTitle: () => (
+      <View style={{ flexDirection: 'row' }}>
+        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#023e8a' }}>
+        ศูนย์การช่วยเหลือ
+        </Text>
+      </View>
+    )}} />
+    <Stack.Screen name="Mood" component={Mood} options={{headerShown: true, headerTitle: () => (
+      <View style={{ flexDirection: 'row' }}>
+        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#023e8a' }}>
+          วันนี้คุณรู้สึกอย่างไร ?
+        </Text>
+      </View>
+    )}}/>
       <Stack.Screen name="AdminTabs" component={AdminNavigator} />
       <Stack.Screen name="AdminHelpCenter" component={AdminHelpCenter} />
       <Stack.Screen name="AdminListUsers" component={AdminListUsers} />
     </Stack.Navigator>
     
   </NavigationContainer>
+  </SafeAreaProvider>
   );
 }

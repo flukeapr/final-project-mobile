@@ -17,7 +17,18 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker"; // Import ImagePicker for image handling
 import { Icon, Button } from "@rneui/base";
 
+
 const { width, height } = Dimensions.get("window");
+
+const Words = [
+  
+  "กู", "มึง", "เหี้ย", "ควย", "สัส", "เย็ด", "หี", "ดอก", "แม่ง", "ไอ้สัตว์",
+  "สถุล", "ระยำ", "โง่", "ชาติหมา", "ตอแหล", "อีดอก", "มึน", "กระสือ", "อัปปรี",
+  "ตีน", "สันดาน", "ชิบหาย", "แดก", "เสือก", "บ้าเอ๊ย",
+  "fuck", "shit", "bitch", "damn", "ass", "bastard", "prick", "dick",
+  "stupid", "idiot", "fool", "dumb", "moron", "retard", "noob",
+  "กาก", "โคตร", "เฮ้ย", "วะ", "โว้ย", "จัญไร", "ห่า"
+];
 
 const CommunityScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]); // Stores all posts
@@ -28,6 +39,7 @@ const CommunityScreen = ({ navigation }) => {
   const [myPost, setMyPost] = useState(false);
   const [isLiked, setIsLiked] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [viewMypost ,setViewMypost] = useState(false);
 
   const getPost = async () => {
     try {
@@ -124,6 +136,10 @@ const CommunityScreen = ({ navigation }) => {
       Alert.alert("กรุณาเขียนความคิดเห็น");
       return;
     }
+    if(checkWord(postText)){
+      Alert.alert("กรุณาไม่พูดคำที่ไม่เหมาะสม");
+      return;
+    }
 
     try {
       const res = await fetch(global.URL + "/api/post/comment", {
@@ -161,9 +177,17 @@ const CommunityScreen = ({ navigation }) => {
     }
   };
 
+  const checkWord = (text:string) => {
+    return Words.some((word :string) => text.includes(word));
+  }
+
   const handlePost = async () => {
     if (!postText) {
       Alert.alert("กรุณาใส่ข้อความ");
+      return;
+    }
+    if(checkWord(postText)){
+      Alert.alert("กรุณาไม่พูดคำที่ไม่เหมาะสม");
       return;
     }
 
@@ -323,14 +347,14 @@ const CommunityScreen = ({ navigation }) => {
           <Text style={{ fontSize: 12 }}>{formatTime(item.postCreateAt)}</Text>
         </View>
       </View>
-
+      <Text style={styles.topicText}>{item.postText}</Text>
       {item.postImage && (
         <Image
           source={{ uri: global.URL + item.postImage }}
           style={styles.topicImage}
         />
       )}
-      <Text style={styles.topicText}>{item.postText}</Text>
+   
 
       <View style={styles.topicFooter}>
         <TouchableOpacity
@@ -416,8 +440,24 @@ const CommunityScreen = ({ navigation }) => {
   }
 
   return (
+    <>
+    <View style={styles.header}>
+          
+    <Text style={[styles.headerText]}>ชุมชน</Text>
+    <TouchableOpacity onPress={() => navigation.navigate("MyPost",{data: posts.filter((post:any) => post.postUserId === global.session.user.id)})}>
+      <Text style={{color:'#fff', fontSize: 16, fontWeight: "bold"}}>โพสต์ของฉัน</Text>
+    </TouchableOpacity>
+  </View>
     <View style={styles.container}>
-      <Text style={styles.header}>ชุมชน</Text>
+           <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+       
+       
+{/*        
+        <View style={{flex: 1, alignItems: 'flex-end'}}>
+          
+        </View>
+      */}
+      </View>
       <View style={styles.buttonContainer}></View>
       <FlatList
       refreshControl={<RefreshControl refreshing={loading} onRefresh={getPost} />} 
@@ -520,6 +560,7 @@ const CommunityScreen = ({ navigation }) => {
         </View>
       </Modal>
     </View>
+    </>
   );
 };
 
@@ -530,10 +571,19 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    alignSelf: "center",
-    marginVertical: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#023e8a', // Dark blue
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    elevation: 5,
+  },
+  headerText: {
+    fontSize: 20,
+    color: '#ffffff',
+    fontWeight: 'bold',
   },
   topicsContainer: {
     flexGrow: 1,

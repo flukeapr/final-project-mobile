@@ -119,6 +119,15 @@ const HomeScreen = ({navigation}) => {
     return ImageShake[randomIndex];
   }
 
+  const privacy = global.session?.user?.privacy;
+
+  useEffect(() => {
+    console.log("privacy", privacy);
+    if (privacy==='false') {
+      navigation.navigate('Privacy'); 
+    }
+  }, [privacy,navigation]);
+  
 
 
   const username = global.session?.user?.name || 'Guest';
@@ -175,24 +184,25 @@ const HomeScreen = ({navigation}) => {
 
         <View style={styles.buttonsContainer}>
           <Button title="พูดคุยกับ HAPPY" buttonStyle={styles.button} onPress={() => navigation.navigate('Ai')} />
-          <Button title="ประเมินความเครียด" buttonStyle={styles.button} onPress={() => navigation.navigate('Test')} />
+          <Button title="วันนี้คุณรู้สึกอย่างไร ?" buttonStyle={styles.button} onPress={() => navigation.navigate('Mood')} />
           <Button
             buttonStyle={styles.imageButton}
-            title={`วันนี้คุณรู้สึกอย่างไร ?\nแสกนใบหน้า\nเพื่อวิเคราะห์อารมณ์ของคุณ !`}
+            title={`มาประเมินสุขภาพจิตกันเถอะ!\nรู้จักตัวเองมากขึ้น\nเพื่อชีวิตที่มีความสุข`}
+            titleStyle={{lineHeight:25,marginLeft:10}}
             icon={
               <Image
                 source={require('../res/Head_meh.png')}
                 style={styles.imageButtonIcon}
               />
             }
-            onPress={() => navigation.navigate('AR')}
+            onPress={() => navigation.navigate('Test')}
           />
         </View>
 
         <View style={styles.recommendedSection}>
           <Text style={styles.sectionTitle}>สื่อที่น่าสนใจ</Text>
           <TouchableOpacity onPress={() => {}}>
-            <Text style={styles.viewAll} onPress={() => navigation.navigate('Documents')}>ดูทั้งหมด ></Text>
+            <Text style={styles.viewAll} onPress={() => navigation.navigate('Documents')}>ดูทั้งหมด {">"}</Text>
           </TouchableOpacity>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.recommendedScroll}>
             {recommendedData.map((item, index) => (
@@ -214,6 +224,7 @@ const HomeScreen = ({navigation}) => {
         onRequestClose={() => setModalVisible(false)}
         animationType="slide"
         transparent={true}
+        
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -225,9 +236,11 @@ const HomeScreen = ({navigation}) => {
             
             <Text style={{fontSize: 16,fontWeight: 'bold',marginBottom: 10}}>{data?.title}</Text>
             <Text>{data?.text}</Text>
+  
             <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
               <Text style={styles.closeButtonText}>ปิด</Text>
             </TouchableOpacity>
+            
           </View>
         </View>
       </Modal>
@@ -319,6 +332,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     marginBottom: 10,
+    transform:[{scaleX:-1}]
   },
   recommendedSection: {
     padding: 16,
@@ -378,7 +392,8 @@ const styles = StyleSheet.create({
   closeButton: {
     backgroundColor: "#0077b6",
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 10,
+    
   },
   closeButtonText: {
     color: "#fff",

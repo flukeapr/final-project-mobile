@@ -174,12 +174,10 @@ const Test3Screen = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.header}>Mental Health Literacy Assessment</Text>
-        <Text style={styles.description}>
-          Please rate each statement based on your agreement level:
-        </Text>
+        <Text style={styles.header}>แบบประเมิน Mental Health Literacy</Text>
+       
         <Text style={styles.levels}>
-          1 = Strongly Disagree | 2 = Disagree | 3 = Neutral | 4 = Agree | 5 = Strongly Agree
+          การให้คะแนน  1 = ไม่เห็นด้วยอย่างยิ่ง | 2 = ไม่เห็นด้วย | 3 = ทั้งเห็นด้วยและไม่เห็นด้วย | 4 = เห็นด้วย | 5 = เห็นด้วยอย่างมาก
         </Text>
       </View>
 
@@ -246,7 +244,7 @@ const styles = StyleSheet.create({
   container: { 
     flex: 1, 
     padding: 20, 
-    backgroundColor: '#f4f4f4' 
+    backgroundColor: '#dceaf7' 
   },
   headerContainer: { 
     marginBottom: 20 
@@ -255,7 +253,8 @@ const styles = StyleSheet.create({
     fontSize: 24, 
     fontWeight: 'bold', 
     textAlign: 'center', 
-    marginBottom: 10 
+    marginBottom: 10, 
+    color: '#34495E',
   },
   description: { 
     fontSize: 16, 
@@ -265,7 +264,7 @@ const styles = StyleSheet.create({
   levels: { 
     fontSize: 14, 
     textAlign: 'center', 
-    color: '#888' 
+   
   },
   questionContainer: {
     backgroundColor: '#FFFFFF',
