@@ -1,8 +1,9 @@
-import { View, Text, ScrollView, StyleSheet, Alert } from 'react-native'
-import React from 'react'
-import { Button } from '@rneui/base';
+import { View, Text, ScrollView, StyleSheet, Alert, SafeAreaView, StatusBar } from 'react-native'
+import React, { useState } from 'react'
+import { Button,CheckBox } from '@rneui/base';
 
 export default function Privacy({navigation}:any) {
+  const [checked ,setChecked] = useState(false);
     const acceptPrivacy = async ()  => {
         try {
             global.session.user.privacy = 'true';
@@ -26,12 +27,17 @@ export default function Privacy({navigation}:any) {
     }
   return (
     <>
-   
-    <View style={styles.header}>
 
-    <Text style={[styles.title,{color:'#fff'}]}>นโยบายความเป็นส่วนตัว</Text>
-      </View>
+
+  <SafeAreaView style={{flex:1}}>
+
+  <View style={styles.header}>
+
+<Text style={[styles.title,{color:'#fff'}]}>นโยบายความเป็นส่วนตัว</Text>
+  </View>
     <ScrollView style={styles.container}>
+    
+    
     <View style={styles.content}>
        
       
@@ -61,10 +67,16 @@ export default function Privacy({navigation}:any) {
       <Text style={styles.paragraph}>
         ท่านมีสิทธิในการเข้าถึง แก้ไข ลบ และคัดค้านการประมวลผลข้อมูลส่วนบุคคลของท่าน รวมถึงสิทธิในการถอนความยินยอม
       </Text>
-
-     <Button title='ยอมรับ' onPress={acceptPrivacy} />
+      
+      <CheckBox
+      checked={checked}
+      onPress={()=>setChecked(!checked)}
+      title={'ยินยอมการใช้ข้อมูล'}
+      />
+     <Button title='ยอมรับ' disabled={!checked} onPress={acceptPrivacy} />
     </View>
   </ScrollView>
+  </SafeAreaView>
   </>
   )
 }
@@ -73,10 +85,12 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: '#fff',
+      
         
     },
     content: {
-      padding: 20,
+      paddingHorizontal: 20,
+      paddingBottom:20
     },
     title: {
       fontSize: 24,
@@ -100,7 +114,7 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         alignItems: 'center',
         padding:10,
-       
+      
         backgroundColor: '#023e8a', // Dark blue
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,

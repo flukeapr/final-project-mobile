@@ -194,7 +194,7 @@ const ProfileScreen = ({navigation}) => {
         <Text style={styles.buttonText}>ศูนย์การช่วยเหลือ</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={() => {setModalHelpCenter(true)}}>
-        <Text style={styles.buttonText}>ปรึกษาสุขภาพจิต</Text>
+        <Text style={styles.buttonText}>แหล่งให้คำปรึกษาสุขภาพจิต</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.button} onPress={handleLogout}>

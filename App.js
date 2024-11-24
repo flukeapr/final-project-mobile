@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View,Image } from 'react-native';
+import { StyleSheet, Text, View,Image, SafeAreaView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -142,7 +142,7 @@ const AdminNavigator = () => {
 }
 export default function App() {
   return (
-    <SafeAreaProvider>
+   
     <NavigationContainer independent={true}>
     <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
@@ -188,6 +188,6 @@ export default function App() {
     </Stack.Navigator>
     
   </NavigationContainer>
-  </SafeAreaProvider>
+  
   );
 }

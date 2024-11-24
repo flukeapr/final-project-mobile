@@ -2,6 +2,7 @@ import { View, Text,StyleSheet,Alert,TouchableOpacity,ActivityIndicator,ScrollVi
 import React,{useState,useEffect} from 'react'
 import { Button } from '@rneui/base';
 import { Ionicons } from '@expo/vector-icons';
+import { Calendar } from 'react-native-calendars';
 
 const moodColors = {
     verySmile: '#03BD5A',  

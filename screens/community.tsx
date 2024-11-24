@@ -11,7 +11,8 @@ import {
   Modal,
   Dimensions,
   RefreshControl,
-  ActivityIndicator
+  ActivityIndicator,
+  SafeAreaView
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker"; // Import ImagePicker for image handling
@@ -83,7 +84,7 @@ const CommunityScreen = ({ navigation }) => {
 
         // Sort the posts by creation date in descending order (latest first)
         formattedPost.sort(
-          (a, b) => new Date(b.postCreateAt) - new Date(a.postCreateAt)
+          (a : {postCreateAt : string}, b: {postCreateAt : string}) => new Date(b.postCreateAt).getTime() - new Date(a.postCreateAt).getTime()
         );
 
         setPosts(formattedPost); // Update state with formatted posts
@@ -213,7 +214,7 @@ const CommunityScreen = ({ navigation }) => {
             type: uploadImage.mimeType || "image/jpeg",
             name: uploadImage.fileName || "filename",
             size: uploadImage.fileSize || 0,
-          });
+          }as any);
 
           try {
             const imageRes = await fetch(global.URL + `/api/post/image/${id}`, {
@@ -441,6 +442,7 @@ const CommunityScreen = ({ navigation }) => {
 
   return (
     <>
+    <SafeAreaView style={{flex:1}}>
     <View style={styles.header}>
           
     <Text style={[styles.headerText]}>ชุมชน</Text>
@@ -560,6 +562,7 @@ const CommunityScreen = ({ navigation }) => {
         </View>
       </Modal>
     </View>
+    </SafeAreaView>
     </>
   );
 };
