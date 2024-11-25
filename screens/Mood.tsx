@@ -217,7 +217,7 @@ export default function Mood() {
                 />
                 <View>
                     <Text style={{fontSize: 16, fontWeight: 'bold'}}>{item.mood_name}</Text>
-                    <Text >{item.description}</Text>
+                    <Text>{item.description}</Text>
                     <Text style={{fontSize: 12}}>{new Date(item.create_at).toLocaleDateString('th-TH')}</Text>
                 </View>
                 </View>
@@ -257,18 +257,28 @@ export default function Mood() {
       </View>
       </View>
       <Button title='บันทึก' color='#023e8a' containerStyle={{width:'75%',alignSelf:'center',marginVertical:4,borderRadius:5}} onPress={saveMood}/>
-        {moodList.length > 0 ? (
-            <FlatList 
-            refreshControl={<RefreshControl refreshing={loading} onRefresh={getMoodList} />}
-            data={moodList}
-            renderItem={renderItem}
-            />
+     {loading ?
+   (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#023e8a" />
+        <Text>กำลังโหลด...</Text>
+      </View>
+    ) :(
+      moodList.length > 0 ? (
+        <FlatList 
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={getMoodList} />}
+        data={moodList}
+        renderItem={renderItem}
+        />
 
-        ):(
-            <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-                <Text>ไม่มีข้อมูล</Text>
-            </View>
-        )}
+    ):(
+        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+            <Text>ไม่มีข้อมูล</Text>
+        </View>
+    )
+    )
+  }
+       
     </View>
   )
 }
@@ -334,5 +344,11 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: '#ffff',
         borderRadius: 5,
+      },
+      loadingContainer: {
+        backgroundColor:"#dceaf7",
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
       },
 })

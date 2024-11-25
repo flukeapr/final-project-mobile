@@ -46,12 +46,12 @@ const Test1Screen = () => {
     checkQuizStatus();
   }, []);
 
-  const handleScoreChange = (question, score) => {
+  const handleScoreChange = (question :string, score :number) => {
     setScores({ ...scores, [question]: score });
     setCurrentQuestion(currentQuestion + 1);
   };
 
-  const renderScoreButtons = (questionKey) => {
+  const renderScoreButtons = (questionKey : string) => {
     return (
       <View style={styles.scoreContainer}>
         {Array.from({ length: 10 }, (_, i) => i + 1).map((score) => (
@@ -86,10 +86,10 @@ const Test1Screen = () => {
       return;
     }
 
-    const totalScore = selectQuiz.reduce((a, b) => a + b, 0);
-    const averageScore = (totalScore / 3).toFixed(2);
+    const totalScore  : number = selectQuiz.reduce((a, b) => a + b, 0);
+    const averageScore :number = parseFloat((totalScore / 3).toFixed(2));
 
-    let resultText, resultImage;
+    let resultText : string, resultImage: string;
     if (averageScore <= 4) {
       resultText = "พลังใจน้อย";
       resultImage = require('../res/Head_sad.png'); // Use actual path to the image
@@ -142,7 +142,7 @@ const Test1Screen = () => {
       {currentQuestion >= 1 && (
         <Animatable.View animation="fadeInUp" style={styles.questionContainer}>
           <Text style={styles.questionText}>
-            1.) ฉันเอาชนะอุปสรรคปัญหาต่างๆ ในชีวิต ได้
+            1.{")"} ฉันเอาชนะอุปสรรคปัญหาต่างๆ ในชีวิต ได้
           </Text>
           {renderScoreButtons('q1')}
         </Animatable.View>
@@ -151,7 +151,7 @@ const Test1Screen = () => {
       {currentQuestion >= 2 && (
         <Animatable.View animation="fadeInUp" style={styles.questionContainer}>
           <Text style={styles.questionText}>
-            2.) ฉันมีกำลังใจและได้รับการสนับสนุนจากคนรอบข้าง
+            2.{")"} ฉันมีกำลังใจและได้รับการสนับสนุนจากคนรอบข้าง
           </Text>
           {renderScoreButtons('q2')}
         </Animatable.View>
@@ -160,7 +160,7 @@ const Test1Screen = () => {
       {currentQuestion >= 3 && (
         <Animatable.View animation="fadeInUp" style={styles.questionContainer}>
           <Text style={styles.questionText}>
-            3.) ฉันจัดการกับปัญหาและความเครียดของตนเองได้
+            3.{")"} ฉันจัดการกับปัญหาและความเครียดของตนเองได้
           </Text>
           {renderScoreButtons('q3')}
         </Animatable.View>

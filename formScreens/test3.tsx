@@ -43,6 +43,9 @@ const categories = {
 
 const options = ['1', '2', '3', '4', '5'];
 
+
+
+
 const Test3Screen = () => {
   const [selectQuiz, setSelectQuiz] = useState(Array(questions.length).fill(null));
   const [postQuiz, setPostQuiz] = useState(false);
