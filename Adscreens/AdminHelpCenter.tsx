@@ -98,9 +98,9 @@ export default function AdminHelpCenter({navigation,route}) {
     
   return (
     <View style={styles.container}>
-        <View style={styles.header}>
+        {/* <View style={styles.header}>
         <Text style={styles.headerText}>ศูนย์การช่วยเหลือ</Text>
-      </View>
+      </View> */}
       <View style={styles.chatContainer}>
         <Text style={styles.chatTitle}>Chat with {user.user.name}</Text>
        
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     container:{
         flex:1,
         backgroundColor:'#ffffff',
-        paddingTop:StatusBar.currentHeight
+       
     },
     containerSelf:{
     

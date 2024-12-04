@@ -57,7 +57,7 @@ export default function AdminListUsers({navigation}) {
 
   return (
     <SafeAreaView style={styles.container}> 
-    <View style={styles.text}><Text style={{color:'white',fontSize:16}}>เลือกแชทกับผู้ใช้</Text></View>
+    {/* <View style={styles.text}><Text style={{color:'white',fontSize:16}}>เลือกแชทกับผู้ใช้</Text></View> */}
     <View >
     
         <FlatList

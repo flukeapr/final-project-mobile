@@ -74,7 +74,7 @@ const PersonalDataScreen = ({ navigation, route }) => {
   }
 
   return (
-   
+   <SafeAreaView>
     <ScrollView>
       <View style={styles.container}>
         <Text style={styles.title}>แบบสอบถามข้อมูลส่วนบุคคล</Text>
@@ -295,7 +295,7 @@ const PersonalDataScreen = ({ navigation, route }) => {
         </View>
       </Modal>
     </ScrollView>
-   
+    </SafeAreaView>
   );
 };
 

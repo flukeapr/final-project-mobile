@@ -183,8 +183,24 @@ export default function App() {
       </View>
     )}}/>
       <Stack.Screen name="AdminTabs" component={AdminNavigator} />
-      <Stack.Screen name="AdminHelpCenter" component={AdminHelpCenter} />
-      <Stack.Screen name="AdminListUsers" component={AdminListUsers} />
+      <Stack.Screen name="AdminHelpCenter" component={AdminHelpCenter}options={{
+        headerShown: true, headerTitle: () => (
+          <View style={{ flexDirection: 'row' }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#023e8a' }}>
+            ศูนย์การช่วยเหลือ
+            </Text>
+          </View>
+        )
+      }} />
+      <Stack.Screen name="AdminListUsers" component={AdminListUsers} options={{
+        headerShown: true, headerTitle: () => (
+          <View style={{ flexDirection: 'row' }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#023e8a' }}>
+            เลือกแชทกับผู้ใช้
+            </Text>
+          </View>
+        )
+      }} />
     </Stack.Navigator>
     
   </NavigationContainer>
