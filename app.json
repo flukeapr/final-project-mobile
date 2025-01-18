@@ -9,7 +9,15 @@
         {
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
         }
-      ]
+      ],
+     [ 
+      "expo-build-properties",
+      {
+        "android": {
+        "useClearTextTraffic": true
+        }
+      }
+    ]
     ],
     "orientation": "portrait",
     "icon": "./assets/images/android-chrome-192x192.png",
